@@ -424,14 +424,17 @@
       <div class="no-game-sub">Venten på værtens signal...</div>
     </div>
 
-    <!-- Card view -->
+    <!-- Card view — prominent -->
     <div id="card-view" style="display:none; margin-bottom:16px;">
-      <div style="background:#161616; border:1.5px solid rgba(200,255,0,0.4); border-radius:20px; padding:32px 24px; text-align:center;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:20px;">🃏 AKTIVT KORT</div>
-        <div id="card-text" style="font-size:20px;font-weight:800;color:#fff;line-height:1.5;"></div>
-        <div style="margin-top:20px;font-size:12px;color:#444;">Kortene opdateres automatisk</div>
+      <div id="card-box" style="background:#161616; border:2px solid rgba(200,255,0,0.5); border-radius:24px; padding:36px 28px; text-align:center; box-shadow: 0 0 40px rgba(200,255,0,0.15);">
+        <div id="card-label" style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:24px;">🃏 AKTIVT KORT</div>
+        <div id="card-text" style="font-size:22px;font-weight:900;color:#fff;line-height:1.6;"></div>
+        <div style="margin-top:24px;font-size:12px;color:#555;letter-spacing:1px;">OPDATERES AUTOMATISK</div>
       </div>
     </div>
+
+    <!-- Voting view (Tilbøjelig) -->
+    <div id="voting-view" style="display:none; margin-bottom:16px;"></div>
 
     <!-- Guests -->
     <div class="card">
@@ -445,11 +448,12 @@
     <div style="background:#111; border:1px solid #1e1e1e; border-radius:16px; padding:20px; margin-bottom:16px;">
       <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:6px;">🚧 HOSTED er under udvikling</div>
       <div style="font-size:13px; color:#555; line-height:1.6;">
-        Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på. Oplever du fejl eller har du feedback, er vi meget taknemmelige for at høre det!
+        Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på.
       </div>
-      <a href="mailto:ingridklein2003@gmail.com" style="display:inline-block; margin-top:12px; font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;">
-        Send feedback →
-      </a>
+      <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
+        <a href="/landing" style="font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;">Læs mere om HOSTED →</a>
+        <a href="mailto:ingridklein2003@gmail.com" style="font-size:13px; font-weight:700; color:#555; text-decoration:none;">Send feedback</a>
+      </div>
     </div>
 
     <p style="color:#333; font-size:12px; text-align:center; margin-top:4px; margin-bottom:16px;">
@@ -633,6 +637,9 @@
     let currentActiveGame = null;
     let currentActiveCard = null;
     let currentPackName = null;
+    let currentQuestion = null;
+    let currentActivePlayers = [];
+    let myVoteThisQuestion = null;
     let showingCardView = false;
 
     // Pack name → accent color (matches iOS DesignSystem)
@@ -648,12 +655,14 @@
     async function pollGameAndGuests() {
       try {
         const [parties, guests] = await Promise.all([
-          supabase('GET', `parties?id=eq.${partyId}&select=active_game,active_card`),
+          supabase('GET', `parties?id=eq.${partyId}&select=active_game,active_card,active_question,active_players`),
           supabase('GET', `guests?party_id=eq.${partyId}&select=display_name,avatar_url`)
         ]);
 
         const activeGameRaw = parties?.[0]?.active_game || null;
         const activeCard = parties?.[0]?.active_card || null;
+        const activeQuestion = parties?.[0]?.active_question || null;
+        const activePlayersJson = parties?.[0]?.active_players || null;
 
         // Parse "Kortspil|PackName" format
         let activeGame = activeGameRaw;
@@ -662,41 +671,62 @@
           [activeGame, packName] = activeGameRaw.split('|');
         }
 
-        if (activeGameRaw !== currentActiveGame) {
+        // Parse players JSON
+        let activePlayers = [];
+        try { if (activePlayersJson) activePlayers = JSON.parse(activePlayersJson); } catch(e) {}
+
+        if (activeGameRaw !== currentActiveGame || JSON.stringify(activePlayers) !== JSON.stringify(currentActivePlayers)) {
           currentActiveGame = activeGameRaw;
           currentPackName = packName;
-          if (!showingCardView) updateGameSection(activeGame, packName, activeCard);
+          currentActivePlayers = activePlayers;
+          if (!showingCardView) updateGameSection(activeGame, packName, activePlayers, activeCard);
         }
         if (activeCard !== currentActiveCard) {
           currentActiveCard = activeCard;
           updateCardDisplay(activeCard, currentPackName);
+        }
+        // Tilbøjelig: refresh question + votes
+        if (activeGame === 'Tilbøjelig' && activeQuestion) {
+          if (activeQuestion !== currentQuestion) {
+            currentQuestion = activeQuestion;
+            myVoteThisQuestion = null; // new question = reset my vote
+          }
+          updateVotingView(activeQuestion, activePlayers);
+        } else if (currentQuestion && activeGame !== 'Tilbøjelig') {
+          currentQuestion = null;
+          document.getElementById('voting-view').style.display = 'none';
         }
         if (guests) updateGuestsRow(guests);
       } catch (e) { /* stille fejl */ }
     }
 
     const GAME_INFO = {
-      'Kortspil':    { icon: '🃏', sub: 'Tryk for at følge med i kortene →', tappable: true },
-      'Tilbøjelig':  { icon: '👉', sub: 'Hvem er mest tilbøjelig?', tappable: false },
-      'Impostor':    { icon: '🎭', sub: 'Find impostoren!', tappable: false },
-      'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!', tappable: false },
+      'Kortspil':    { icon: '🃏', sub: 'Tryk for at følge med i kortene →', tappable: true, color: '#c8ff00' },
+      'Tilbøjelig':  { icon: '👉', sub: 'Stem herunder!', tappable: false, color: '#00e5ff' },
+      'Impostor':    { icon: '🎭', sub: 'Find impostoren!', tappable: false, color: '#9b59b6' },
+      'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!', tappable: false, color: '#ff2d78' },
     };
 
-    function updateGameSection(activeGame, packName, activeCard) {
+    function updateGameSection(activeGame, packName, activePlayers, activeCard) {
       const section = document.getElementById('game-section');
       if (activeGame) {
-        const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!', tappable: false };
+        const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!', tappable: false, color: '#c8ff00' };
         const accentColor = (activeGame === 'Kortspil' && packName && PACK_COLORS[packName])
-          ? PACK_COLORS[packName] : '#c8ff00';
+          ? PACK_COLORS[packName] : info.color;
         const displayName = (activeGame === 'Kortspil' && packName) ? `Kortspil — ${packName}` : activeGame;
+        const playerChips = activePlayers.length > 0
+          ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">${activePlayers.map(p =>
+              `<div style="background:#111;border:1px solid #333;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:#ccc;">${p}</div>`
+            ).join('')}</div>` : '';
         section.className = 'game-card active-game' + (info.tappable ? ' tappable-card' : '');
         section.style.cursor = info.tappable ? 'pointer' : 'default';
         section.style.borderColor = `${accentColor}66`;
         section.innerHTML = `
-          <div class="game-live-badge" style="background:${accentColor};"><div class="live-dot"></div> LIVE NU</div>
+          <div class="game-live-badge" style="background:${accentColor};color:#0d0d0d;"><div class="live-dot" style="background:#0d0d0d;"></div> LIVE NU</div>
           <div class="game-name">${info.icon} ${displayName}</div>
           <div class="game-sub">${info.sub}</div>
-          ${info.tappable ? `<div style="margin-top:8px;font-size:12px;color:${accentColor};font-weight:700;">TAP FOR AT FØLGE MED ↗</div>` : ''}
+          ${playerChips}
+          ${info.tappable ? `<div style="margin-top:10px;font-size:12px;color:${accentColor};font-weight:700;">TAP FOR AT FØLGE MED ↗</div>` : ''}
         `;
         if (info.tappable) {
           section.onclick = () => openCardView();
@@ -705,6 +735,8 @@
         }
       } else {
         showingCardView = false;
+        document.getElementById('card-view').style.display = 'none';
+        document.getElementById('voting-view').style.display = 'none';
         section.className = 'game-card';
         section.style.cursor = 'default';
         section.style.borderColor = '';
@@ -744,6 +776,79 @@
         cv.style.display = 'none';
         showingCardView = false;
       }
+    }
+
+    async function updateVotingView(question, players) {
+      const vv = document.getElementById('voting-view');
+      if (!question || !players.length) { vv.style.display = 'none'; return; }
+      vv.style.display = 'block';
+
+      // Fetch current vote counts
+      let votes = {};
+      try {
+        const qEnc = encodeURIComponent(question);
+        const rows = await supabase('GET', `most_likely_votes?party_id=eq.${partyId}&question=eq.${qEnc}&select=voted_for`);
+        (rows || []).forEach(r => { votes[r.voted_for] = (votes[r.voted_for] || 0) + 1; });
+      } catch(e) {}
+
+      const totalVotes = Object.values(votes).reduce((a,b) => a+b, 0);
+      const winner = players.reduce((best, p) => (votes[p]||0) > (votes[best]||0) ? p : best, players[0]);
+      const isWinner = totalVotes > 0 && players.filter(p => (votes[p]||0) === (votes[winner]||0)).length === 1;
+
+      vv.innerHTML = `
+        <div style="background:#161616;border:1.5px solid rgba(0,229,255,0.4);border-radius:24px;padding:28px 24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#00e5ff;margin-bottom:16px;">👉 STEM NU</div>
+          <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:20px;line-height:1.5;">${question}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${players.map(p => {
+              const count = votes[p] || 0;
+              const pct = totalVotes > 0 ? Math.round(count/totalVotes*100) : 0;
+              const isMyVote = myVoteThisQuestion === p;
+              const isTop = isWinner && p === winner;
+              return `
+                <button onclick="castWebVote('${p.replace(/'/g,"\\'")}','${question.replace(/'/g,"\\'")}');return false;"
+                  style="background:${isMyVote ? 'rgba(0,229,255,0.15)' : '#111'};
+                         border:1.5px solid ${isMyVote ? '#00e5ff' : '#2a2a2a'};
+                         border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;
+                         display:flex;align-items:center;gap:12px;transition:all 0.2s;">
+                  <div style="width:40px;height:40px;border-radius:50%;background:${isMyVote?'rgba(0,229,255,0.25)':'#1a1a1a'};
+                       display:flex;align-items:center;justify-content:center;
+                       font-size:16px;font-weight:900;color:${count>0?'#00e5ff':'#555'};flex-shrink:0;">
+                    ${p.charAt(0).toUpperCase()}
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:16px;font-weight:700;color:#fff;">${p}</div>
+                    <div style="height:4px;background:#222;border-radius:2px;margin-top:6px;overflow:hidden;">
+                      <div style="height:100%;width:${pct}%;background:#00e5ff;border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                  </div>
+                  ${count > 0 ? `<div style="font-size:15px;font-weight:900;color:${isTop?'#00e5ff':'#666'};">${count}</div>` : ''}
+                  ${isMyVote ? `<div style="font-size:11px;color:#00e5ff;font-weight:700;">✓</div>` : ''}
+                </button>`;
+            }).join('')}
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:#444;text-align:center;">${totalVotes} stemme${totalVotes===1?'':'r'} · opdateres hvert 3. sek</div>
+        </div>`;
+    }
+
+    async function castWebVote(playerName, question) {
+      if (!partyId || !guestName) return;
+      myVoteThisQuestion = playerName;
+      try {
+        const body = JSON.stringify({ party_id: partyId, question, voter_name: guestName, voted_for: playerName });
+        await fetch(`${SUPABASE_URL}/rest/v1/most_likely_votes`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal,resolution=merge-duplicates',
+            'on_conflict': 'party_id,question,voter_name'
+          },
+          body
+        });
+        // Refresh voting view immediately
+        updateVotingView(question, currentActivePlayers);
+      } catch(e) {}
     }
 
     function updateGuestsRow(guests) {
