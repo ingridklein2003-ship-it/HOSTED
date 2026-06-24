@@ -187,6 +187,8 @@
       font-size: 13px; color: #555;
     }
 
+    .tappable-card { cursor: pointer; }
+    .tappable-card:active { transform: scale(0.98); }
     .no-game-icon { font-size: 32px; margin-bottom: 8px; }
     .no-game-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
     .no-game-sub { font-size: 13px; color: #555; }
@@ -416,10 +418,19 @@
     </div>
 
     <!-- Active game -->
-    <div id="game-section" class="game-card">
+    <div id="game-section" class="game-card" style="transition: all 0.3s;">
       <div class="no-game-icon">🎮</div>
       <div class="no-game-title">Ingen spil i gang</div>
       <div class="no-game-sub">Venten på værtens signal...</div>
+    </div>
+
+    <!-- Card view -->
+    <div id="card-view" style="display:none; margin-bottom:16px;">
+      <div style="background:#161616; border:1.5px solid rgba(200,255,0,0.4); border-radius:20px; padding:32px 24px; text-align:center;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:20px;">🃏 AKTIVT KORT</div>
+        <div id="card-text" style="font-size:20px;font-weight:800;color:#fff;line-height:1.5;"></div>
+        <div style="margin-top:20px;font-size:12px;color:#444;">Kortene opdateres automatisk</div>
+      </div>
     </div>
 
     <!-- Guests -->
@@ -631,46 +642,87 @@
       pollInterval = setInterval(pollGameAndGuests, 5000);
     }
 
+    let currentActiveGame = null;
+    let currentActiveCard = null;
+    let showingCardView = false;
+
     async function pollGameAndGuests() {
       try {
         const [parties, guests] = await Promise.all([
-          supabase('GET', `parties?id=eq.${partyId}&select=active_game`),
+          supabase('GET', `parties?id=eq.${partyId}&select=active_game,active_card`),
           supabase('GET', `guests?party_id=eq.${partyId}&select=display_name,avatar_url`)
         ]);
 
-        // Active game
         const activeGame = parties?.[0]?.active_game || null;
-        updateGameSection(activeGame);
+        const activeCard = parties?.[0]?.active_card || null;
 
-        // Guests
+        if (activeGame !== currentActiveGame) {
+          currentActiveGame = activeGame;
+          if (!showingCardView) updateGameSection(activeGame, activeCard);
+        }
+        if (activeCard !== currentActiveCard) {
+          currentActiveCard = activeCard;
+          updateCardDisplay(activeCard);
+        }
         if (guests) updateGuestsRow(guests);
       } catch (e) { /* stille fejl */ }
     }
 
     const GAME_INFO = {
-      'Kortspil':    { icon: '🃏', sub: 'Tag din telefon frem og åbn appen!' },
-      'Tilbøjelig':  { icon: '👉', sub: 'Hvem er mest tilbøjelig?' },
-      'Impostor':    { icon: '🎭', sub: 'Find impostoren!' },
-      'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!' },
+      'Kortspil':    { icon: '🃏', sub: 'Tryk for at følge med i kortene →', tappable: true },
+      'Tilbøjelig':  { icon: '👉', sub: 'Hvem er mest tilbøjelig?', tappable: false },
+      'Impostor':    { icon: '🎭', sub: 'Find impostoren!', tappable: false },
+      'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!', tappable: false },
     };
 
-    function updateGameSection(activeGame) {
+    function updateGameSection(activeGame, activeCard) {
       const section = document.getElementById('game-section');
       if (activeGame) {
-        const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!' };
-        section.className = 'game-card active-game';
+        const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!', tappable: false };
+        section.className = 'game-card active-game' + (info.tappable ? ' tappable-card' : '');
+        section.style.cursor = info.tappable ? 'pointer' : 'default';
         section.innerHTML = `
           <div class="game-live-badge"><div class="live-dot"></div> LIVE NU</div>
           <div class="game-name">${info.icon} ${activeGame}</div>
           <div class="game-sub">${info.sub}</div>
+          ${info.tappable ? '<div style="margin-top:8px;font-size:12px;color:#c8ff00;font-weight:700;">TAP FOR AT FØLGE MED ↗</div>' : ''}
         `;
+        if (info.tappable) {
+          section.onclick = () => openCardView();
+        } else {
+          section.onclick = null;
+        }
       } else {
+        showingCardView = false;
         section.className = 'game-card';
+        section.style.cursor = 'default';
+        section.onclick = null;
         section.innerHTML = `
           <div class="no-game-icon">🎮</div>
           <div class="no-game-title">Ingen spil i gang</div>
           <div class="no-game-sub">Venter på værtens signal...</div>
         `;
+        document.getElementById('card-view').style.display = 'none';
+      }
+    }
+
+    function openCardView() {
+      showingCardView = true;
+      const cv = document.getElementById('card-view');
+      cv.style.display = 'block';
+      updateCardDisplay(currentActiveCard);
+      cv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateCardDisplay(cardText) {
+      const el = document.getElementById('card-text');
+      if (!el) return;
+      if (cardText) {
+        el.textContent = cardText;
+        document.getElementById('card-view').style.display = showingCardView ? 'block' : 'none';
+      } else {
+        document.getElementById('card-view').style.display = 'none';
+        showingCardView = false;
       }
     }
 
