@@ -335,6 +335,37 @@
 
   </div>
 
+  <!-- EMAIL FIRST (with party code) -->
+  <div class="screen" id="screen-email-first">
+    <div class="logo-row">
+      <div class="badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+      <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label">DU ER INVITERET TIL</div>
+      <div class="party-name-display" id="ef-party-name">—</div>
+      <div class="party-code-display" id="ef-party-code">—</div>
+    </div>
+
+    <div class="waitlist-card">
+      <div class="waitlist-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub">Én mail når HOSTED er klar til alle. Intet spam.</div>
+      <div class="waitlist-row" id="ef-email-row">
+        <input class="waitlist-input" id="email-ef" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="btn-ef" onclick="submitWaitlistThenContinue()">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="success-ef" style="margin-bottom:0;">
+        <span>✓</span> Du er på listen!
+      </div>
+    </div>
+
+    <button class="join-btn" id="ef-skip-btn" onclick="goToJoinForm()" style="background:#1a1a1a; color:#888; border:1px solid #2a2a2a;">
+      Spring over → Gå til festen
+    </button>
+  </div>
+
   <!-- JOIN FORM -->
   <div class="screen" id="screen-join">
     <div class="logo-row">
@@ -542,12 +573,10 @@
         partyId = party.id;
         partyName = party.name;
 
-        document.getElementById('join-party-name').textContent = party.name;
-        document.getElementById('join-party-code').textContent = 'Kode: ' + party.code;
-        document.getElementById('name-input').addEventListener('input', updateJoinBtn);
-        document.getElementById('join-btn').onclick = doJoin;
-
-        show('screen-join');
+        // Show email-first screen
+        document.getElementById('ef-party-name').textContent = party.name;
+        document.getElementById('ef-party-code').textContent = 'Kode: ' + party.code;
+        show('screen-email-first');
       } catch (e) {
         showError('Kunne ikke hente fest. Prøv igen om lidt.');
       }
@@ -699,6 +728,40 @@
         btn.textContent = 'Tilmeld';
         alert('Noget gik galt — prøv igen.');
       }
+    }
+
+    function goToJoinForm() {
+      document.getElementById('join-party-name').textContent = partyName;
+      document.getElementById('join-party-code').textContent = 'Kode: ' + partyCode;
+      document.getElementById('name-input').addEventListener('input', updateJoinBtn);
+      document.getElementById('join-btn').onclick = doJoin;
+      show('screen-join');
+    }
+
+    async function submitWaitlistThenContinue() {
+      const input = document.getElementById('email-ef');
+      const btn = document.getElementById('btn-ef');
+      const success = document.getElementById('success-ef');
+      const row = document.getElementById('ef-email-row');
+      const email = input.value.trim();
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => input.style.borderColor = '', 1500);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ email, source: 'party_qr' })
+        });
+      } catch(e) { /* stille fejl — fortsæt uanset */ }
+      row.style.display = 'none';
+      success.style.display = 'flex';
+      // Auto-videre efter 1.2 sek
+      setTimeout(() => goToJoinForm(), 1200);
     }
 
     function updateManualJoinBtn() {
