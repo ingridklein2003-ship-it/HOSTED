@@ -313,6 +313,26 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="card-label">HAR DU EN FESTKODE?</div>
+      <div class="waitlist-row" style="margin-top:8px;">
+        <input
+          class="name-input"
+          id="manual-code-input"
+          type="text"
+          placeholder="ABC123"
+          maxlength="6"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          style="text-transform:uppercase;letter-spacing:4px;font-size:22px;font-weight:900;"
+          oninput="this.value=this.value.toUpperCase();updateManualJoinBtn()"
+        >
+        <button class="waitlist-btn" id="btn-manual-join" disabled onclick="joinWithManualCode()" style="padding:14px 22px;border-radius:12px;font-size:18px;">→</button>
+      </div>
+      <div style="color:#ff4444;font-size:13px;margin-top:8px;display:none;" id="manual-code-error">Festen blev ikke fundet — tjek koden</div>
+    </div>
+
   </div>
 
   <!-- JOIN FORM -->
@@ -678,6 +698,44 @@
         btn.disabled = false;
         btn.textContent = 'Tilmeld';
         alert('Noget gik galt — prøv igen.');
+      }
+    }
+
+    function updateManualJoinBtn() {
+      const val = document.getElementById('manual-code-input').value.trim();
+      document.getElementById('btn-manual-join').disabled = val.length < 3;
+      document.getElementById('manual-code-error').style.display = 'none';
+    }
+
+    async function joinWithManualCode() {
+      const code = document.getElementById('manual-code-input').value.trim().toUpperCase();
+      const btn = document.getElementById('btn-manual-join');
+      const err = document.getElementById('manual-code-error');
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        const parties = await supabase('GET', `parties?code=eq.${code}&select=id,name,code`);
+        if (!parties || parties.length === 0) {
+          err.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = '→';
+          return;
+        }
+        // Code found — set state and go to join form
+        const party = parties[0];
+        partyId = party.id;
+        partyName = party.name;
+        partyCode = party.code;
+        document.getElementById('join-party-name').textContent = party.name;
+        document.getElementById('join-party-code').textContent = 'Kode: ' + party.code;
+        document.getElementById('name-input').addEventListener('input', updateJoinBtn);
+        document.getElementById('join-btn').onclick = doJoin;
+        show('screen-join');
+      } catch(e) {
+        err.textContent = 'Noget gik galt — prøv igen.';
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '→';
       }
     }
 
