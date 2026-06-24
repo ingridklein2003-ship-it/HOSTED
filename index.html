@@ -441,31 +441,19 @@
       </div>
     </div>
 
-    <!-- Download hint -->
-    <a class="download-hint" href="https://testflight.apple.com/join/ENz1vJj7" target="_blank">
-      <div class="download-hint-icon">📲</div>
-      <div class="download-hint-text">
-        <div class="download-hint-title">Download HOSTED til iPhone</div>
-        <div class="download-hint-sub">Spil med i kortspil, foto og meget mere</div>
+    <!-- Beta info -->
+    <div style="background:#111; border:1px solid #1e1e1e; border-radius:16px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:6px;">🚧 HOSTED er under udvikling</div>
+      <div style="font-size:13px; color:#555; line-height:1.6;">
+        Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på. Oplever du fejl eller har du feedback, er vi meget taknemmelige for at høre det!
       </div>
-      <div class="download-hint-arrow">›</div>
-    </a>
-
-    <!-- Waitlist -->
-    <div class="waitlist-card" id="waitlist-dash">
-      <div class="waitlist-title">🔔 Få besked når appen lanceres til alle</div>
-      <div class="waitlist-sub">Android + fuld launch. Vi sender én mail.</div>
-      <div class="waitlist-row">
-        <input class="waitlist-input" id="email-dash" type="email" placeholder="din@email.dk" autocomplete="email">
-        <button class="waitlist-btn" id="btn-dash" onclick="submitWaitlist('email-dash','btn-dash','success-dash')">Tilmeld</button>
-      </div>
-      <div class="waitlist-success" id="success-dash">
-        <span>✓</span> Du er på listen!
-      </div>
+      <a href="mailto:ingridklein2003@gmail.com" style="display:inline-block; margin-top:12px; font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;">
+        Send feedback →
+      </a>
     </div>
 
-    <p style="color:#333; font-size:12px; text-align:center; margin-top:8px;">
-      HOSTED beta · iOS 17+
+    <p style="color:#333; font-size:12px; text-align:center; margin-top:4px; margin-bottom:16px;">
+      HOSTED beta · iOS + Android + Web kommer snart
     </p>
   </div>
 
@@ -644,7 +632,18 @@
 
     let currentActiveGame = null;
     let currentActiveCard = null;
+    let currentPackName = null;
     let showingCardView = false;
+
+    // Pack name → accent color (matches iOS DesignSystem)
+    const PACK_COLORS = {
+      'Opvarmning':   '#c8ff00',
+      'Hjernevrider': '#00e5ff',
+      'Party Mode':   '#ff2d78',
+      'Flirt & Drama':'#ff8c00',
+      'Udfordringer': '#9b59b6',
+      'Hardcore':     '#ff3333',
+    };
 
     async function pollGameAndGuests() {
       try {
@@ -653,16 +652,24 @@
           supabase('GET', `guests?party_id=eq.${partyId}&select=display_name,avatar_url`)
         ]);
 
-        const activeGame = parties?.[0]?.active_game || null;
+        const activeGameRaw = parties?.[0]?.active_game || null;
         const activeCard = parties?.[0]?.active_card || null;
 
-        if (activeGame !== currentActiveGame) {
-          currentActiveGame = activeGame;
-          if (!showingCardView) updateGameSection(activeGame, activeCard);
+        // Parse "Kortspil|PackName" format
+        let activeGame = activeGameRaw;
+        let packName = null;
+        if (activeGameRaw && activeGameRaw.includes('|')) {
+          [activeGame, packName] = activeGameRaw.split('|');
+        }
+
+        if (activeGameRaw !== currentActiveGame) {
+          currentActiveGame = activeGameRaw;
+          currentPackName = packName;
+          if (!showingCardView) updateGameSection(activeGame, packName, activeCard);
         }
         if (activeCard !== currentActiveCard) {
           currentActiveCard = activeCard;
-          updateCardDisplay(activeCard);
+          updateCardDisplay(activeCard, currentPackName);
         }
         if (guests) updateGuestsRow(guests);
       } catch (e) { /* stille fejl */ }
@@ -675,17 +682,21 @@
       'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!', tappable: false },
     };
 
-    function updateGameSection(activeGame, activeCard) {
+    function updateGameSection(activeGame, packName, activeCard) {
       const section = document.getElementById('game-section');
       if (activeGame) {
         const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!', tappable: false };
+        const accentColor = (activeGame === 'Kortspil' && packName && PACK_COLORS[packName])
+          ? PACK_COLORS[packName] : '#c8ff00';
+        const displayName = (activeGame === 'Kortspil' && packName) ? `Kortspil — ${packName}` : activeGame;
         section.className = 'game-card active-game' + (info.tappable ? ' tappable-card' : '');
         section.style.cursor = info.tappable ? 'pointer' : 'default';
+        section.style.borderColor = `${accentColor}66`;
         section.innerHTML = `
-          <div class="game-live-badge"><div class="live-dot"></div> LIVE NU</div>
-          <div class="game-name">${info.icon} ${activeGame}</div>
+          <div class="game-live-badge" style="background:${accentColor};"><div class="live-dot"></div> LIVE NU</div>
+          <div class="game-name">${info.icon} ${displayName}</div>
           <div class="game-sub">${info.sub}</div>
-          ${info.tappable ? '<div style="margin-top:8px;font-size:12px;color:#c8ff00;font-weight:700;">TAP FOR AT FØLGE MED ↗</div>' : ''}
+          ${info.tappable ? `<div style="margin-top:8px;font-size:12px;color:${accentColor};font-weight:700;">TAP FOR AT FØLGE MED ↗</div>` : ''}
         `;
         if (info.tappable) {
           section.onclick = () => openCardView();
@@ -696,6 +707,7 @@
         showingCardView = false;
         section.className = 'game-card';
         section.style.cursor = 'default';
+        section.style.borderColor = '';
         section.onclick = null;
         section.innerHTML = `
           <div class="no-game-icon">🎮</div>
@@ -710,18 +722,26 @@
       showingCardView = true;
       const cv = document.getElementById('card-view');
       cv.style.display = 'block';
-      updateCardDisplay(currentActiveCard);
+      updateCardDisplay(currentActiveCard, currentPackName);
       cv.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    function updateCardDisplay(cardText) {
+    function updateCardDisplay(cardText, packName) {
       const el = document.getElementById('card-text');
+      const cv = document.getElementById('card-view');
       if (!el) return;
       if (cardText) {
         el.textContent = cardText;
-        document.getElementById('card-view').style.display = showingCardView ? 'block' : 'none';
+        const accentColor = (packName && PACK_COLORS[packName]) ? PACK_COLORS[packName] : '#c8ff00';
+        const cardBox = cv.querySelector('div');
+        if (cardBox) {
+          cardBox.style.borderColor = `${accentColor}66`;
+        }
+        const label = cv.querySelector('div > div');
+        if (label) label.style.color = accentColor;
+        cv.style.display = showingCardView ? 'block' : 'none';
       } else {
-        document.getElementById('card-view').style.display = 'none';
+        cv.style.display = 'none';
         showingCardView = false;
       }
     }
