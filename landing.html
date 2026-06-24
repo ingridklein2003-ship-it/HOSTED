@@ -125,6 +125,17 @@
       font-size: 12px; color: var(--sub);
       text-align: center; margin-top: 12px;
     }
+    .scroll-hint {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; margin-top: 40px; color: var(--sub);
+      font-size: 12px; letter-spacing: 2px; font-weight: 700;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint svg { opacity: 0.4; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
 
     /* ── SECTION ── */
     section {
@@ -328,9 +339,9 @@
     <h1>HOSTED</h1>
     <p class="hero-tagline">kortspil · impostor · fotoalbum · og meget mere</p>
     <p class="hero-description">
-      Den fest-app du altid har manglet. Saml alle gæster i ét rum —
-      spil spillene, del billederne og se hvem der er mest tilbøjelig til alt.
-      Ingen grund til at downloade noget. Bare scan og join.
+      Den app du altid har manglet til fester, familiemiddage og alt derimellem.
+      Saml alle i ét rum — spil spillene, del billederne, stem på hinanden.
+      Ingen download nødvendig for gæster. Bare scan og join.
     </p>
 
     <div class="waitlist-box">
@@ -345,6 +356,12 @@
       </div>
       <p class="count-text">Ingen spam. Kun én mail når vi launcher.</p>
     </div>
+    <div class="scroll-hint">
+      <span>SCROLL OG LÆS MERE</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
   </div>
 
   <div class="divider"></div>
@@ -354,8 +371,8 @@
     <span class="section-badge">HVAD KAN HOSTED?</span>
     <h2 class="section-title">Alt hvad en fest skal bruge — ét sted</h2>
     <p class="section-sub">
-      HOSTED er designet til at gøre festen bedre fra det sekund alle ankommer,
-      til det øjeblik den slutter.
+      HOSTED er designet til at samle folk — uanset om det er en fest, en familiemiddag
+      eller en hyggelig aften med vennerne. Og du bestemmer selv om der er alkohol i glasset.
     </p>
 
     <div class="features-grid">
@@ -396,16 +413,16 @@
         <div class="feature-badge badge-live">LIVE NU</div>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <div class="feature-name">Fest-chat</div>
-        <div class="feature-desc">Send beskeder til alle på festen. Perfekt til at koordinere eller bare lave sjov.</div>
-        <div class="feature-badge badge-soon">SNART</div>
+        <div class="feature-icon">🥤</div>
+        <div class="feature-name">Ingen pres</div>
+        <div class="feature-desc">Du vælger selv inden hvert spil om du drikker eller ej. Alle er stadig med — uanset hvad der er i glasset.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">📱</div>
-        <div class="feature-name">Android + Web</div>
-        <div class="feature-desc">HOSTED er pt. kun iOS. Vi arbejder på Android-app og fuld web-version.</div>
-        <div class="feature-badge badge-soon">SNART</div>
+        <div class="feature-icon">🎪</div>
+        <div class="feature-name">Til alle begivenheder</div>
+        <div class="feature-desc">Familiemiddag, teambuilding, bryllupsaften — vi bygger kortpakker og spil til langt mere end fester.</div>
+        <div class="feature-badge badge-soon">PÅ VEJ</div>
       </div>
     </div>
   </section>
@@ -489,10 +506,10 @@
   <!-- ABOUT -->
   <section>
     <span class="section-badge">HVEM STÅR BAG?</span>
-    <h2 class="section-title">Bygget af én, der savnede det</h2>
+    <h2 class="section-title">Bygget af to, der savnede det</h2>
     <p class="section-sub">
-      HOSTED er ikke lavet af et stort firma. Det er lavet af én person, der til en fest
-      tænkte "er der ikke en bedre måde at gøre det her på?"
+      HOSTED er ikke lavet af et stort firma. Det startede med én tanke til en fest:
+      hvorfor findes der ikke bare ét sted, der samler det hele?
     </p>
 
     <div class="about-card">
@@ -501,16 +518,30 @@
         <div class="about-name">Ingrid Klein</div>
         <div class="about-role">Grundlægger & Developer</div>
         <div class="about-text">
-          Jeg er en ung dansk iværksætter og developer. Til en fest savnede jeg et sted
-          hvor alle gæster var med i det samme rum digitalt — billeder, spil, afstemninger.
-          Alt det eksisterede ikke et sted. Så jeg byggede det selv.
+          Jeg voksede op med fester hvor alle sad med hver sin telefon og spillede hvert sit
+          spil — ingen fælles oplevelse, ingen fælles energi. Jeg ledte efter en app der
+          samlede alle gæster i ét rum: spil, billeder, afstemninger. Den fandtes ikke.
+          Så jeg byggede den selv.
           <br><br>
-          HOSTED er stadig i beta, men vokser hurtigt. Vil du følge med eller give feedback,
-          er du meget velkommen til at skrive til mig direkte.
+          Det vigtige for mig var at den ikke bare handler om at drikke. Fra dag ét kan alle
+          vælge at spille uden alkohol — man er stadig 100% med i fællesskabet uanset hvad
+          man har i glasset.
         </div>
         <a href="mailto:ingridklein2003@gmail.com" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:700;color:var(--lime);text-decoration:none;">
           Skriv til mig → ingridklein2003@gmail.com
         </a>
+      </div>
+    </div>
+
+    <div class="about-card" style="margin-top:14px;">
+      <div class="about-avatar" style="background: linear-gradient(135deg, #00e5ff, #7b61ff);">🤝</div>
+      <div>
+        <div class="about-name">Mikkel</div>
+        <div class="about-role">Medstifter & Forretning</div>
+        <div class="about-text">
+          Mikkel kom med tidligt og har siden drevet den forretningsmæssige side af HOSTED.
+          Hans netværk, idéer og energi er en stor del af grunden til at appen er der, den er i dag.
+        </div>
       </div>
     </div>
   </section>
@@ -555,8 +586,8 @@
       <div class="roadmap-item">
         <div class="roadmap-dot dot-next"></div>
         <div>
-          <div class="roadmap-label">Nye spiltyper</div>
-          <div class="roadmap-sub">Sandheds- eller Konsekvens, Druk-bingo, Kender du X?, og mere</div>
+          <div class="roadmap-label">Nye spiltyper & kortpakker</div>
+          <div class="roadmap-sub">Familiemiddag, samtalekort, teambuilding, bryllupsaften — HOSTED til alle slags begivenheder</div>
         </div>
       </div>
       <div class="roadmap-item">
