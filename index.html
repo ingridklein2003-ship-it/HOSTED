@@ -219,6 +219,54 @@
     .download-hint-sub { font-size: 12px; color: #555; }
     .download-hint-arrow { color: #444; font-size: 16px; }
 
+    /* ── WAITLIST ── */
+    .waitlist-card {
+      background: #161616;
+      border: 1px solid rgba(200,255,0,0.25);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .waitlist-title {
+      font-size: 16px; font-weight: 800; color: #fff;
+      margin-bottom: 6px;
+    }
+    .waitlist-sub {
+      font-size: 13px; color: #666;
+      margin-bottom: 16px; line-height: 1.5;
+    }
+    .waitlist-row {
+      display: flex; gap: 8px;
+    }
+    .waitlist-input {
+      flex: 1;
+      background: #111; border: 1px solid #2a2a2a;
+      border-radius: 12px; color: #fff;
+      font-size: 15px; padding: 14px 16px;
+      outline: none; -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-input:focus { border-color: #c8ff00; }
+    .waitlist-input::placeholder { color: #333; }
+    .waitlist-btn {
+      background: #c8ff00; color: #0d0d0d;
+      border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 800;
+      padding: 14px 18px; cursor: pointer;
+      white-space: nowrap; -webkit-appearance: none;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .waitlist-btn:disabled { opacity: 0.4; cursor: default; }
+    .waitlist-success {
+      display: none;
+      align-items: center; gap: 10px;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.3);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 14px; font-weight: 700; color: #c8ff00;
+    }
+
     /* ── ERROR ── */
     .error-icon { font-size: 48px; text-align: center; margin: 20px 0 12px; }
     .error-title { font-size: 20px; font-weight: 900; text-align: center; margin-bottom: 8px; }
@@ -235,6 +283,44 @@
       <h1>HOSTED</h1>
     </div>
     <div class="spinner"></div>
+  </div>
+
+  <!-- NO CODE — waitlist landing -->
+  <div class="screen" id="screen-nocode">
+    <div class="logo-row">
+      <div class="badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+      <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+    </div>
+
+    <div class="card" style="text-align:center; padding: 32px 24px;">
+      <div style="font-size:48px; margin-bottom:12px;">🎉</div>
+      <div style="font-size:20px; font-weight:900; margin-bottom:8px;">Appen er på vej</div>
+      <div style="font-size:14px; color:#555; line-height:1.6;">
+        HOSTED er i beta. Skriv dig op og få besked<br>som en af de første når den er klar til alle.
+      </div>
+    </div>
+
+    <div class="waitlist-card" id="waitlist-nocode">
+      <div class="waitlist-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub">Vi sender dig én mail. Intet spam.</div>
+      <div class="waitlist-row">
+        <input class="waitlist-input" id="email-nocode" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="btn-nocode" onclick="submitWaitlist('email-nocode','btn-nocode','success-nocode')">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="success-nocode">
+        <span>✓</span> Du er på listen — vi giver dig besked!
+      </div>
+    </div>
+
+    <a class="download-hint" href="https://testflight.apple.com/join/ENz1vJj7" target="_blank">
+      <div class="download-hint-icon">📲</div>
+      <div class="download-hint-text">
+        <div class="download-hint-title">Allerede på iPhone? Download beta</div>
+        <div class="download-hint-sub">TestFlight · iOS 17+</div>
+      </div>
+      <div class="download-hint-arrow">›</div>
+    </a>
   </div>
 
   <!-- JOIN FORM -->
@@ -310,6 +396,19 @@
       </div>
       <div class="download-hint-arrow">›</div>
     </a>
+
+    <!-- Waitlist -->
+    <div class="waitlist-card" id="waitlist-dash">
+      <div class="waitlist-title">🔔 Få besked når appen lanceres til alle</div>
+      <div class="waitlist-sub">Android + fuld launch. Vi sender én mail.</div>
+      <div class="waitlist-row">
+        <input class="waitlist-input" id="email-dash" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="btn-dash" onclick="submitWaitlist('email-dash','btn-dash','success-dash')">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="success-dash">
+        <span>✓</span> Du er på listen!
+      </div>
+    </div>
 
     <p style="color:#333; font-size:12px; text-align:center; margin-top:8px;">
       HOSTED beta · iOS 17+
@@ -417,7 +516,7 @@
       }
 
       if (!partyCode) {
-        showError('Ingen festkode i linket. Bed værten om at dele det rigtige link.');
+        show('screen-nocode');
         return;
       }
 
@@ -554,6 +653,34 @@
     function showError(msg) {
       document.getElementById('error-msg').textContent = msg;
       show('screen-error');
+    }
+
+    async function submitWaitlist(inputId, btnId, successId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      const success = document.getElementById(successId);
+      const email = input.value.trim();
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => input.style.borderColor = '', 1500);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        await supabase('POST', 'waitlist', {
+          email,
+          source: partyCode ? 'party_join' : 'nocode'
+        });
+        input.closest('.waitlist-row') && (input.closest('.waitlist-row').style.display = 'none');
+        success.style.display = 'flex';
+        // Remember so they don't see it again
+        localStorage.setItem('hosted_waitlist_' + email, '1');
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Tilmeld';
+        alert('Noget gik galt — prøv igen.');
+      }
     }
 
     init();
