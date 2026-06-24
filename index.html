@@ -668,13 +668,19 @@
       btn.disabled = true;
       btn.textContent = '…';
       try {
-        await supabase('POST', 'waitlist', {
-          email,
-          source: partyCode ? 'party_join' : 'nocode'
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email, source: partyCode ? 'party_join' : 'nocode' })
         });
-        input.closest('.waitlist-row') && (input.closest('.waitlist-row').style.display = 'none');
+        if (!res.ok) throw new Error(res.status);
+        input.closest('.waitlist-row').style.display = 'none';
         success.style.display = 'flex';
-        // Remember so they don't see it again
         localStorage.setItem('hosted_waitlist_' + email, '1');
       } catch(e) {
         btn.disabled = false;
