@@ -273,15 +273,38 @@
     .error-icon { font-size: 48px; text-align: center; margin: 20px 0 12px; }
     .error-title { font-size: 20px; font-weight: 900; text-align: center; margin-bottom: 8px; }
     .error-sub { font-size: 14px; color: #555; text-align: center; line-height: 1.5; }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      top: 16px; right: 16px;
+      display: flex; gap: 6px;
+      z-index: 100;
+    }
+    .lang-btn {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      padding: 6px 12px; border-radius: 20px;
+      cursor: pointer; -webkit-appearance: none;
+      transition: all 0.15s;
+    }
+    .lang-btn.active { background: #c8ff00; border-color: #c8ff00; color: #0d0d0d; }
   </style>
 </head>
 <body>
   <div class="glow-top"></div>
 
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnDA" onclick="setLang('da')">DA</button>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
+
   <!-- LOADING -->
   <div class="screen active" id="screen-loading">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="load-badge">FEST-APP</div>
       <h1>HOSTED</h1>
     </div>
     <div class="spinner"></div>
@@ -290,22 +313,22 @@
   <!-- NO CODE — waitlist landing -->
   <div class="screen" id="screen-nocode">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="nc-badge">FEST-APP</div>
       <h1>HOSTED</h1>
-      <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+      <p class="tagline" id="nc-tagline">kortspil · fotoalbum · druk-tæller</p>
     </div>
 
     <div class="card" style="text-align:center; padding: 32px 24px;">
       <div style="font-size:48px; margin-bottom:12px;">🎉</div>
-      <div style="font-size:20px; font-weight:900; margin-bottom:8px;">Appen er på vej</div>
-      <div style="font-size:14px; color:#555; line-height:1.6;">
+      <div style="font-size:20px; font-weight:900; margin-bottom:8px;" id="nc-coming-title">Appen er på vej</div>
+      <div style="font-size:14px; color:#555; line-height:1.6;" id="nc-coming-desc">
         HOSTED er i beta. Skriv dig op og få besked<br>som en af de første når den er klar til alle.
       </div>
     </div>
 
     <div class="waitlist-card" id="waitlist-nocode">
-      <div class="waitlist-title">🔔 Få besked når appen lanceres</div>
-      <div class="waitlist-sub">Vi sender dig én mail. Intet spam.</div>
+      <div class="waitlist-title" id="nc-wl-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub" id="nc-wl-sub">Vi sender dig én mail. Intet spam.</div>
       <div class="waitlist-row">
         <input class="waitlist-input" id="email-nocode" type="email" placeholder="din@email.dk" autocomplete="email">
         <button class="waitlist-btn" id="btn-nocode" onclick="submitWaitlist('email-nocode','btn-nocode','success-nocode')">Tilmeld</button>
@@ -316,7 +339,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label">HAR DU EN FESTKODE?</div>
+      <div class="card-label" id="nc-code-label">HAR DU EN FESTKODE?</div>
       <div class="waitlist-row" style="margin-top:8px;">
         <input
           class="name-input"
@@ -340,20 +363,20 @@
   <!-- EMAIL FIRST (with party code) -->
   <div class="screen" id="screen-email-first">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="ef-badge">FEST-APP</div>
       <h1>HOSTED</h1>
-      <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+      <p class="tagline" id="ef-tagline">kortspil · fotoalbum · druk-tæller</p>
     </div>
 
     <div class="card">
-      <div class="card-label">DU ER INVITERET TIL</div>
+      <div class="card-label" id="ef-invited-label">DU ER INVITERET TIL</div>
       <div class="party-name-display" id="ef-party-name">—</div>
       <div class="party-code-display" id="ef-party-code">—</div>
     </div>
 
     <div class="waitlist-card">
-      <div class="waitlist-title">🔔 Få besked når appen lanceres</div>
-      <div class="waitlist-sub">Én mail når HOSTED er klar til alle. Intet spam.</div>
+      <div class="waitlist-title" id="ef-wl-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub" id="ef-wl-sub">Én mail når HOSTED er klar til alle. Intet spam.</div>
       <div class="waitlist-row" id="ef-email-row">
         <input class="waitlist-input" id="email-ef" type="email" placeholder="din@email.dk" autocomplete="email">
         <button class="waitlist-btn" id="btn-ef" onclick="submitWaitlistThenContinue()">Tilmeld</button>
@@ -371,19 +394,19 @@
   <!-- JOIN FORM -->
   <div class="screen" id="screen-join">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="join-badge">FEST-APP</div>
       <h1>HOSTED</h1>
-      <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+      <p class="tagline" id="join-tagline">kortspil · fotoalbum · druk-tæller</p>
     </div>
 
     <div class="card">
-      <div class="card-label">DU ER INVITERET TIL</div>
+      <div class="card-label" id="join-invited-label">DU ER INVITERET TIL</div>
       <div class="party-name-display" id="join-party-name">—</div>
       <div class="party-code-display" id="join-party-code">—</div>
     </div>
 
     <div class="card">
-      <label class="input-label">DIT NAVN</label>
+      <label class="input-label" id="join-name-label">DIT NAVN</label>
       <input
         class="name-input"
         id="name-input"
@@ -397,7 +420,7 @@
     </div>
 
     <div class="card">
-      <label class="input-label">VÆLG DIN EMOJI</label>
+      <label class="input-label" id="join-emoji-label">VÆLG DIN EMOJI</label>
       <div class="emoji-grid" id="emoji-grid"></div>
     </div>
 
@@ -407,7 +430,7 @@
   <!-- DASHBOARD -->
   <div class="screen" id="screen-dashboard">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="dash-badge">FEST-APP</div>
       <h1>HOSTED</h1>
     </div>
 
@@ -420,16 +443,16 @@
     <!-- Active game -->
     <div id="game-section" class="game-card" style="transition: all 0.3s;">
       <div class="no-game-icon">🎮</div>
-      <div class="no-game-title">Ingen spil i gang</div>
-      <div class="no-game-sub">Venten på værtens signal...</div>
+      <div class="no-game-title" id="dash-no-game-title">Ingen spil i gang</div>
+      <div class="no-game-sub" id="dash-no-game-sub">Venter på værtens signal...</div>
     </div>
 
     <!-- Card view — prominent -->
     <div id="card-view" style="display:none; margin-bottom:16px;">
       <div id="card-box" style="background:#161616; border:2px solid rgba(200,255,0,0.5); border-radius:24px; padding:36px 28px; text-align:center; box-shadow: 0 0 40px rgba(200,255,0,0.15);">
-        <div id="card-label" style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:24px;">🃏 AKTIVT KORT</div>
+        <div id="card-label-el" style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:24px;">🃏 AKTIVT KORT</div>
         <div id="card-text" style="font-size:22px;font-weight:900;color:#fff;line-height:1.6;"></div>
-        <div style="margin-top:24px;font-size:12px;color:#555;letter-spacing:1px;">OPDATERES AUTOMATISK</div>
+        <div id="card-update-text" style="margin-top:24px;font-size:12px;color:#555;letter-spacing:1px;">OPDATERES AUTOMATISK</div>
       </div>
     </div>
 
@@ -438,25 +461,25 @@
 
     <!-- Guests -->
     <div class="card">
-      <div class="card-label" style="margin-bottom:12px;">GÆSTER</div>
+      <div class="card-label" style="margin-bottom:12px;" id="dash-guests-label">GÆSTER</div>
       <div class="guests-row" id="guests-row">
-        <div style="color:#444; font-size:13px;">Henter gæster...</div>
+        <div style="color:#444; font-size:13px;" id="dash-loading-guests">Henter gæster...</div>
       </div>
     </div>
 
     <!-- Beta info -->
     <div style="background:#111; border:1px solid #1e1e1e; border-radius:16px; padding:20px; margin-bottom:16px;">
-      <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:6px;">🚧 HOSTED er under udvikling</div>
-      <div style="font-size:13px; color:#555; line-height:1.6;">
+      <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:6px;" id="dash-beta-title">🚧 HOSTED er under udvikling</div>
+      <div style="font-size:13px; color:#555; line-height:1.6;" id="dash-beta-desc">
         Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på.
       </div>
       <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
-        <a href="/landing" style="font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;">Læs mere om HOSTED →</a>
-        <a href="mailto:ingridklein2003@gmail.com" style="font-size:13px; font-weight:700; color:#555; text-decoration:none;">Send feedback</a>
+        <a href="/landing" style="font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;" id="dash-read-more">Læs mere om HOSTED →</a>
+        <a href="mailto:hosted.mobileapp@gmail.com" style="font-size:13px; font-weight:700; color:#555; text-decoration:none;" id="dash-feedback">Send feedback</a>
       </div>
     </div>
 
-    <p style="color:#333; font-size:12px; text-align:center; margin-top:4px; margin-bottom:16px;">
+    <p style="color:#333; font-size:12px; text-align:center; margin-top:4px; margin-bottom:16px;" id="dash-footer-text">
       HOSTED beta · iOS + Android + Web kommer snart
     </p>
   </div>
@@ -464,11 +487,11 @@
   <!-- ERROR -->
   <div class="screen" id="screen-error">
     <div class="logo-row">
-      <div class="badge">FEST-APP</div>
+      <div class="badge" id="err-badge">FEST-APP</div>
       <h1>HOSTED</h1>
     </div>
     <div class="error-icon">😕</div>
-    <div class="error-title">Festen ikke fundet</div>
+    <div class="error-title" id="error-title">Festen ikke fundet</div>
     <div class="error-sub" id="error-msg">
       Festkoden er ugyldig eller festen er afsluttet.<br>Bed værten om at dele linket igen.
     </div>
@@ -485,6 +508,209 @@
       '😎','🥵','🤩','🫶','💪','🙈',
       '🎯','🏆','🎲','🃏','🍺','💃'
     ];
+
+    // ── Language ──
+    let currentLang = 'da';
+
+    const LANG = {
+      da: {
+        badge: 'FEST-APP',
+        tagline: 'kortspil · fotoalbum · druk-tæller',
+        // loading / shared
+        code_prefix: 'Kode: ',
+        // no-code
+        nc_coming_title: 'Appen er på vej',
+        nc_coming_desc: 'HOSTED er i beta. Skriv dig op og få besked<br>som en af de første når den er klar til alle.',
+        nc_wl_title: '🔔 Få besked når appen lanceres',
+        nc_wl_sub: 'Vi sender dig én mail. Intet spam.',
+        nc_wl_btn: 'Tilmeld',
+        nc_success: '<span>✓</span> Du er på listen — vi giver dig besked!',
+        nc_code_label: 'HAR DU EN FESTKODE?',
+        nc_code_error: 'Festen blev ikke fundet — tjek koden',
+        nc_code_error_generic: 'Noget gik galt — prøv igen.',
+        // email-first
+        ef_invited_label: 'DU ER INVITERET TIL',
+        ef_wl_title: '🔔 Få besked når appen lanceres',
+        ef_wl_sub: 'Én mail når HOSTED er klar til alle. Intet spam.',
+        ef_wl_btn: 'Tilmeld',
+        ef_success: '<span>✓</span> Du er på listen!',
+        ef_skip: 'Spring over → Gå til festen',
+        // join
+        join_invited_label: 'DU ER INVITERET TIL',
+        join_name_label: 'DIT NAVN',
+        join_name_placeholder: 'Hvad hedder du?',
+        join_emoji_label: 'VÆLG DIN EMOJI',
+        join_btn: 'Join festen',
+        joining: 'Joiner…',
+        join_error: 'Noget gik galt — prøv igen.',
+        // dashboard
+        dash_badge: 'FEST-APP',
+        dash_party_in: 'Du er med i festen 🔥',
+        no_game_title: 'Ingen spil i gang',
+        no_game_sub: 'Venter på værtens signal...',
+        guests_label: 'GÆSTER',
+        loading_guests: 'Henter gæster...',
+        no_guests: 'Ingen gæster endnu',
+        beta_title: '🚧 HOSTED er under udvikling',
+        beta_desc: 'Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på.',
+        read_more: 'Læs mere om HOSTED →',
+        send_feedback: 'Send feedback',
+        dash_footer: 'HOSTED beta · iOS + Android + Web kommer snart',
+        // error screen
+        error_title: 'Festen ikke fundet',
+        error_sub: 'Festkoden er ugyldig eller festen er afsluttet.<br>Bed værten om at dele linket igen.',
+        // dynamic game
+        live_now: 'LIVE NU',
+        tap_follow: 'TAP FOR AT FØLGE MED ↗',
+        active_card_label: '🃏 AKTIVT KORT',
+        card_update: 'OPDATERES AUTOMATISK',
+        vote_header: '👉 STEM NU',
+        votes_text: (n) => `${n} stemme${n===1?'':'r'} · opdateres hvert 3. sek`,
+        game_kortspil_sub: 'Tryk for at følge med i kortene →',
+        game_tilbojelig_sub: 'Stem herunder!',
+        game_impostor_sub: 'Find impostoren!',
+        game_turnering_sub: 'Der spilles turnering!',
+        game_default_sub: 'Spil er i gang!',
+        // init errors
+        init_not_found: 'Festen findes ikke. Tjek at koden er korrekt.',
+        init_fetch_error: 'Kunne ikke hente fest. Prøv igen om lidt.',
+        // waitlist
+        wl_loading: '…',
+        wl_alert: 'Noget gik galt — prøv igen.',
+      },
+      en: {
+        badge: 'PARTY APP',
+        tagline: 'card games · photo album · drink counter',
+        code_prefix: 'Code: ',
+        // no-code
+        nc_coming_title: 'App coming soon',
+        nc_coming_desc: 'HOSTED is in beta. Sign up and be one of the first to know when it\'s ready for everyone.',
+        nc_wl_title: '🔔 Get notified when the app launches',
+        nc_wl_sub: 'We\'ll send you one email. No spam.',
+        nc_wl_btn: 'Sign up',
+        nc_success: '<span>✓</span> You\'re on the list — we\'ll let you know!',
+        nc_code_label: 'HAVE A PARTY CODE?',
+        nc_code_error: 'Party not found — check the code',
+        nc_code_error_generic: 'Something went wrong — please try again.',
+        // email-first
+        ef_invited_label: 'YOU\'RE INVITED TO',
+        ef_wl_title: '🔔 Get notified when the app launches',
+        ef_wl_sub: 'One email when HOSTED is ready for everyone. No spam.',
+        ef_wl_btn: 'Sign up',
+        ef_success: '<span>✓</span> You\'re on the list!',
+        ef_skip: 'Skip → Join the party',
+        // join
+        join_invited_label: 'YOU\'RE INVITED TO',
+        join_name_label: 'YOUR NAME',
+        join_name_placeholder: 'What\'s your name?',
+        join_emoji_label: 'PICK YOUR EMOJI',
+        join_btn: 'Join the party',
+        joining: 'Joining…',
+        join_error: 'Something went wrong — please try again.',
+        // dashboard
+        dash_badge: 'PARTY APP',
+        dash_party_in: 'You\'re in the party 🔥',
+        no_game_title: 'No game running',
+        no_game_sub: 'Waiting for the host\'s signal...',
+        guests_label: 'GUESTS',
+        loading_guests: 'Loading guests...',
+        no_guests: 'No guests yet',
+        beta_title: '🚧 HOSTED is in development',
+        beta_desc: 'The app is in beta and coming to all platforms. There may be delays or unavailable features — we\'re working on it.',
+        read_more: 'Read more about HOSTED →',
+        send_feedback: 'Send feedback',
+        dash_footer: 'HOSTED beta · iOS + Android + Web coming soon',
+        // error screen
+        error_title: 'Party not found',
+        error_sub: 'The party code is invalid or the party has ended.<br>Ask the host to share the link again.',
+        // dynamic game
+        live_now: 'LIVE NOW',
+        tap_follow: 'TAP TO FOLLOW ALONG ↗',
+        active_card_label: '🃏 ACTIVE CARD',
+        card_update: 'UPDATES AUTOMATICALLY',
+        vote_header: '👉 VOTE NOW',
+        votes_text: (n) => `${n} vote${n===1?'':'s'} · updates every 3 sec`,
+        game_kortspil_sub: 'Tap to follow the cards →',
+        game_tilbojelig_sub: 'Vote below!',
+        game_impostor_sub: 'Find the impostor!',
+        game_turnering_sub: 'Tournament in progress!',
+        game_default_sub: 'Game in progress!',
+        // init errors
+        init_not_found: 'Party not found. Check that the code is correct.',
+        init_fetch_error: 'Could not load the party. Try again in a moment.',
+        // waitlist
+        wl_loading: '…',
+        wl_alert: 'Something went wrong — please try again.',
+      }
+    };
+
+    function T(key) { return LANG[currentLang][key] || LANG['da'][key] || key; }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      const s = LANG[lang];
+      // Badges & taglines
+      ['load-badge','nc-badge','ef-badge','join-badge','dash-badge','err-badge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = s.badge;
+      });
+      ['nc-tagline','ef-tagline','join-tagline'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = s.tagline;
+      });
+      // No-code screen
+      setText('nc-coming-title', s.nc_coming_title);
+      setHTML('nc-coming-desc', s.nc_coming_desc);
+      setText('nc-wl-title', s.nc_wl_title);
+      setText('nc-wl-sub', s.nc_wl_sub);
+      setText('btn-nocode', s.nc_wl_btn);
+      setHTML('success-nocode', s.nc_success);
+      setText('nc-code-label', s.nc_code_label);
+      setText('manual-code-error', document.getElementById('manual-code-error')?.dataset.generic ? s.nc_code_error_generic : s.nc_code_error);
+      // Email-first screen
+      setText('ef-invited-label', s.ef_invited_label);
+      setText('ef-wl-title', s.ef_wl_title);
+      setText('ef-wl-sub', s.ef_wl_sub);
+      setText('btn-ef', s.ef_wl_btn);
+      setHTML('success-ef', s.ef_success);
+      setText('ef-skip-btn', s.ef_skip);
+      // Join screen
+      setText('join-invited-label', s.join_invited_label);
+      setText('join-name-label', s.join_name_label);
+      const ni = document.getElementById('name-input');
+      if (ni) ni.placeholder = s.join_name_placeholder;
+      setText('join-emoji-label', s.join_emoji_label);
+      const jb = document.getElementById('join-btn');
+      if (jb && !jb.disabled) jb.textContent = s.join_btn;
+      else if (jb && jb.disabled) jb.textContent = s.join_btn;
+      // Dashboard
+      setText('dash-no-game-title', s.no_game_title);
+      setText('dash-no-game-sub', s.no_game_sub);
+      setText('dash-guests-label', s.guests_label);
+      setText('dash-loading-guests', s.loading_guests);
+      setText('dash-beta-title', s.beta_title);
+      setText('dash-beta-desc', s.beta_desc);
+      setText('dash-read-more', s.read_more);
+      setText('dash-feedback', s.send_feedback);
+      setText('dash-footer-text', s.dash_footer);
+      setText('card-label-el', s.active_card_label);
+      setText('card-update-text', s.card_update);
+      // Error screen
+      setText('error-title', s.error_title);
+      // Lang buttons
+      document.getElementById('btnDA').classList.toggle('active', lang === 'da');
+      document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    }
+
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.textContent = val;
+    }
+    function setHTML(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.innerHTML = val;
+    }
 
     // ── State ──
     let partyId = null;
@@ -569,7 +795,7 @@
       try {
         const parties = await supabase('GET', `parties?code=eq.${partyCode}&select=id,name,code`);
         if (!parties || parties.length === 0) {
-          showError('Festen findes ikke. Tjek at koden er korrekt.');
+          showError(T('init_not_found'));
           return;
         }
         const party = parties[0];
@@ -578,10 +804,10 @@
 
         // Show email-first screen
         document.getElementById('ef-party-name').textContent = party.name;
-        document.getElementById('ef-party-code').textContent = 'Kode: ' + party.code;
+        document.getElementById('ef-party-code').textContent = T('code_prefix') + party.code;
         show('screen-email-first');
       } catch (e) {
-        showError('Kunne ikke hente fest. Prøv igen om lidt.');
+        showError(T('init_fetch_error'));
       }
     }
 
@@ -591,7 +817,7 @@
       if (guestName.length < 2 || !selectedEmoji || !partyId) return;
 
       btn.disabled = true;
-      btn.textContent = 'Joiner…';
+      btn.textContent = T('joining');
 
       try {
         // Check if already joined with same name (simple dedup)
@@ -620,8 +846,8 @@
         showDashboard();
       } catch (e) {
         btn.disabled = false;
-        btn.textContent = 'Join festen';
-        alert('Noget gik galt — prøv igen.');
+        btn.textContent = T('join_btn');
+        alert(T('join_error'));
       }
     }
 
@@ -700,17 +926,19 @@
       } catch (e) { /* stille fejl */ }
     }
 
-    const GAME_INFO = {
-      'Kortspil':    { icon: '🃏', sub: 'Tryk for at følge med i kortene →', tappable: true, color: '#c8ff00' },
-      'Tilbøjelig':  { icon: '👉', sub: 'Stem herunder!', tappable: false, color: '#00e5ff' },
-      'Impostor':    { icon: '🎭', sub: 'Find impostoren!', tappable: false, color: '#9b59b6' },
-      'Turnering':   { icon: '🏆', sub: 'Der spilles turnering!', tappable: false, color: '#ff2d78' },
-    };
+    function getGameInfo(activeGame) {
+      return {
+        'Kortspil':    { icon: '🃏', sub: T('game_kortspil_sub'), tappable: true, color: '#c8ff00' },
+        'Tilbøjelig':  { icon: '👉', sub: T('game_tilbojelig_sub'), tappable: false, color: '#00e5ff' },
+        'Impostor':    { icon: '🎭', sub: T('game_impostor_sub'), tappable: false, color: '#9b59b6' },
+        'Turnering':   { icon: '🏆', sub: T('game_turnering_sub'), tappable: false, color: '#ff2d78' },
+      }[activeGame] || { icon: '🎮', sub: T('game_default_sub'), tappable: false, color: '#c8ff00' };
+    }
 
     function updateGameSection(activeGame, packName, activePlayers, activeCard) {
       const section = document.getElementById('game-section');
       if (activeGame) {
-        const info = GAME_INFO[activeGame] || { icon: '🎮', sub: 'Spil er i gang!', tappable: false, color: '#c8ff00' };
+        const info = getGameInfo(activeGame);
         const accentColor = (activeGame === 'Kortspil' && packName && PACK_COLORS[packName])
           ? PACK_COLORS[packName] : info.color;
         const displayName = (activeGame === 'Kortspil' && packName) ? `Kortspil — ${packName}` : activeGame;
@@ -722,11 +950,11 @@
         section.style.cursor = info.tappable ? 'pointer' : 'default';
         section.style.borderColor = `${accentColor}66`;
         section.innerHTML = `
-          <div class="game-live-badge" style="background:${accentColor};color:#0d0d0d;"><div class="live-dot" style="background:#0d0d0d;"></div> LIVE NU</div>
+          <div class="game-live-badge" style="background:${accentColor};color:#0d0d0d;"><div class="live-dot" style="background:#0d0d0d;"></div> ${T('live_now')}</div>
           <div class="game-name">${info.icon} ${displayName}</div>
           <div class="game-sub">${info.sub}</div>
           ${playerChips}
-          ${info.tappable ? `<div style="margin-top:10px;font-size:12px;color:${accentColor};font-weight:700;">TAP FOR AT FØLGE MED ↗</div>` : ''}
+          ${info.tappable ? `<div style="margin-top:10px;font-size:12px;color:${accentColor};font-weight:700;">${T('tap_follow')}</div>` : ''}
         `;
         if (info.tappable) {
           section.onclick = () => openCardView();
@@ -743,8 +971,8 @@
         section.onclick = null;
         section.innerHTML = `
           <div class="no-game-icon">🎮</div>
-          <div class="no-game-title">Ingen spil i gang</div>
-          <div class="no-game-sub">Venter på værtens signal...</div>
+          <div class="no-game-title">${T('no_game_title')}</div>
+          <div class="no-game-sub">${T('no_game_sub')}</div>
         `;
         document.getElementById('card-view').style.display = 'none';
       }
@@ -769,8 +997,8 @@
         if (cardBox) {
           cardBox.style.borderColor = `${accentColor}66`;
         }
-        const label = cv.querySelector('div > div');
-        if (label) label.style.color = accentColor;
+        const labelEl = document.getElementById('card-label-el');
+        if (labelEl) labelEl.style.color = accentColor;
         cv.style.display = showingCardView ? 'block' : 'none';
       } else {
         cv.style.display = 'none';
@@ -797,7 +1025,7 @@
 
       vv.innerHTML = `
         <div style="background:#161616;border:1.5px solid rgba(0,229,255,0.4);border-radius:24px;padding:28px 24px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#00e5ff;margin-bottom:16px;">👉 STEM NU</div>
+          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#00e5ff;margin-bottom:16px;">${T('vote_header')}</div>
           <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:20px;line-height:1.5;">${question}</div>
           <div style="display:flex;flex-direction:column;gap:10px;">
             ${players.map(p => {
@@ -827,7 +1055,7 @@
                 </button>`;
             }).join('')}
           </div>
-          <div style="margin-top:14px;font-size:12px;color:#444;text-align:center;">${totalVotes} stemme${totalVotes===1?'':'r'} · opdateres hvert 3. sek</div>
+          <div style="margin-top:14px;font-size:12px;color:#444;text-align:center;">${LANG[currentLang].votes_text(totalVotes)}</div>
         </div>`;
     }
 
@@ -854,7 +1082,7 @@
     function updateGuestsRow(guests) {
       const row = document.getElementById('guests-row');
       if (guests.length === 0) {
-        row.innerHTML = '<div style="color:#444;font-size:13px;">Ingen gæster endnu</div>';
+        row.innerHTML = `<div style="color:#444;font-size:13px;">${T('no_guests')}</div>`;
         return;
       }
       row.innerHTML = guests.map(g => {
@@ -869,7 +1097,7 @@
     }
 
     function showError(msg) {
-      document.getElementById('error-msg').textContent = msg;
+      document.getElementById('error-msg').innerHTML = msg || LANG[currentLang].error_sub;
       show('screen-error');
     }
 
@@ -884,7 +1112,7 @@
         return;
       }
       btn.disabled = true;
-      btn.textContent = '…';
+      btn.textContent = T('wl_loading');
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
           method: 'POST',
@@ -902,14 +1130,14 @@
         localStorage.setItem('hosted_waitlist_' + email, '1');
       } catch(e) {
         btn.disabled = false;
-        btn.textContent = 'Tilmeld';
-        alert('Noget gik galt — prøv igen.');
+        btn.textContent = T('nc_wl_btn');
+        alert(T('wl_alert'));
       }
     }
 
     function goToJoinForm() {
       document.getElementById('join-party-name').textContent = partyName;
-      document.getElementById('join-party-code').textContent = 'Kode: ' + partyCode;
+      document.getElementById('join-party-code').textContent = T('code_prefix') + partyCode;
       document.getElementById('name-input').addEventListener('input', updateJoinBtn);
       document.getElementById('join-btn').onclick = doJoin;
       show('screen-join');
@@ -927,7 +1155,7 @@
         return;
       }
       btn.disabled = true;
-      btn.textContent = '…';
+      btn.textContent = T('wl_loading');
       try {
         await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
           method: 'POST',
@@ -952,10 +1180,11 @@
       const btn = document.getElementById('btn-manual-join');
       const err = document.getElementById('manual-code-error');
       btn.disabled = true;
-      btn.textContent = '…';
+      btn.textContent = T('wl_loading');
       try {
         const parties = await supabase('GET', `parties?code=eq.${code}&select=id,name,code`);
         if (!parties || parties.length === 0) {
+          err.textContent = T('nc_code_error');
           err.style.display = 'block';
           btn.disabled = false;
           btn.textContent = '→';
@@ -967,12 +1196,12 @@
         partyName = party.name;
         partyCode = party.code;
         document.getElementById('join-party-name').textContent = party.name;
-        document.getElementById('join-party-code').textContent = 'Kode: ' + party.code;
+        document.getElementById('join-party-code').textContent = T('code_prefix') + party.code;
         document.getElementById('name-input').addEventListener('input', updateJoinBtn);
         document.getElementById('join-btn').onclick = doJoin;
         show('screen-join');
       } catch(e) {
-        err.textContent = 'Noget gik galt — prøv igen.';
+        err.textContent = T('nc_code_error_generic');
         err.style.display = 'block';
         btn.disabled = false;
         btn.textContent = '→';

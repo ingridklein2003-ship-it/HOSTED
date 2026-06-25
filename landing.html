@@ -328,36 +328,59 @@
       height: 1px; background: #1a1a1a;
       max-width: 680px; margin: 0 auto;
     }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      top: 16px; right: 16px;
+      display: flex; gap: 6px;
+      z-index: 100;
+    }
+    .lang-btn {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      padding: 6px 12px; border-radius: 20px;
+      cursor: pointer; -webkit-appearance: none;
+      transition: all 0.15s;
+    }
+    .lang-btn.active { background: #c8ff00; border-color: #c8ff00; color: #0d0d0d; }
   </style>
 </head>
 <body>
 
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnDA" onclick="setLang('da')">DA</button>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
+
   <!-- HERO -->
   <div class="hero">
     <div class="hero-glow"></div>
-    <div class="hero-badge">🎉 BETA — KOM MED TIDLIGT</div>
+    <div class="hero-badge" id="hero-badge">🎉 BETA — KOM MED TIDLIGT</div>
     <h1>HOSTED</h1>
-    <p class="hero-tagline">kortspil · impostor · fotoalbum · og meget mere</p>
-    <p class="hero-description">
+    <p class="hero-tagline" id="hero-tagline">kortspil · impostor · fotoalbum · og meget mere</p>
+    <p class="hero-description" id="hero-description">
       Den app du altid har manglet til fester, familiemiddage og alt derimellem.
       Saml alle i ét rum — spil spillene, del billederne, stem på hinanden.
       Ingen download nødvendig for gæster. Bare scan og join.
     </p>
 
     <div class="waitlist-box">
-      <h3>🔔 Få besked når appen lanceres</h3>
-      <p>HOSTED er i beta. Skriv dig op og vær en af de første til at få adgang — til iOS, Android og web.</p>
+      <h3 id="wl-title">🔔 Få besked når appen lanceres</h3>
+      <p id="wl-sub">HOSTED er i beta. Skriv dig op og vær en af de første til at få adgang — til iOS, Android og web.</p>
       <div class="waitlist-row" id="hero-waitlist-row">
         <input class="waitlist-input" id="hero-email" type="email" placeholder="din@email.dk" autocomplete="email">
         <button class="waitlist-btn" id="hero-btn" onclick="submitHeroWaitlist()">Tilmeld</button>
       </div>
       <div class="waitlist-success" id="hero-success">
-        <span>✓</span> Du er på listen! Vi skriver, når det er klar.
+        <span>✓</span> <span id="hero-success-text">Du er på listen! Vi skriver, når det er klar.</span>
       </div>
-      <p class="count-text">Ingen spam. Kun én mail når vi launcher.</p>
+      <p class="count-text" id="wl-no-spam">Ingen spam. Kun én mail når vi launcher.</p>
     </div>
     <div class="scroll-hint">
-      <span>SCROLL OG LÆS MERE</span>
+      <span id="scroll-hint-text">SCROLL OG LÆS MERE</span>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
         <polyline points="6 9 12 15 18 9"></polyline>
       </svg>
@@ -368,9 +391,9 @@
 
   <!-- FEATURES -->
   <section>
-    <span class="section-badge">HVAD KAN HOSTED?</span>
-    <h2 class="section-title">Alt hvad en fest skal bruge — ét sted</h2>
-    <p class="section-sub">
+    <span class="section-badge" id="feat-badge">HVAD KAN HOSTED?</span>
+    <h2 class="section-title" id="feat-title">Alt hvad en fest skal bruge — ét sted</h2>
+    <p class="section-sub" id="feat-sub">
       HOSTED er designet til at samle folk — uanset om det er en fest, en familiemiddag
       eller en hyggelig aften med vennerne. Og du bestemmer selv om der er alkohol i glasset.
     </p>
@@ -378,51 +401,51 @@
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">🃏</div>
-        <div class="feature-name">Kortspil</div>
-        <div class="feature-desc">6 pakker med druk-kort — fra blid opvarmning til hardcore. Gæster følger med live på websiden.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f1-name">Kortspil</div>
+        <div class="feature-desc" id="f1-desc">6 pakker med druk-kort — fra blid opvarmning til hardcore. Gæster følger med live på websiden.</div>
+        <div class="feature-badge badge-live" id="f1-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">👉</div>
-        <div class="feature-name">Hvem er mest tilbøjelig?</div>
-        <div class="feature-desc">Alle gæster stemmer i realtid via websiden. Den med flest stemmer drikker.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f2-name">Hvem er mest tilbøjelig?</div>
+        <div class="feature-desc" id="f2-desc">Alle gæster stemmer i realtid via websiden. Den med flest stemmer drikker.</div>
+        <div class="feature-badge badge-live" id="f2-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🎭</div>
-        <div class="feature-name">Impostor</div>
-        <div class="feature-desc">Find spionen i gruppen. Fungerer med 3–12 spillere og tre sværhedsgrader.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f3-name">Impostor</div>
+        <div class="feature-desc" id="f3-desc">Find spionen i gruppen. Fungerer med 3–12 spillere og tre sværhedsgrader.</div>
+        <div class="feature-badge badge-live" id="f3-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🏆</div>
-        <div class="feature-name">Turnering</div>
-        <div class="feature-desc">Lav en bracket og spil hvad som helst. Beerponq, sten-saks-papir, hvem som helst.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f4-name">Turnering</div>
+        <div class="feature-desc" id="f4-desc">Lav en bracket og spil hvad som helst. Beerponq, sten-saks-papir, hvem som helst.</div>
+        <div class="feature-badge badge-live" id="f4-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">📸</div>
-        <div class="feature-name">Fotoalbum</div>
-        <div class="feature-desc">Alle gæster uploader billeder direkte til et fælles album. Genoplev festen dagen efter.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f5-name">Fotoalbum</div>
+        <div class="feature-desc" id="f5-desc">Alle gæster uploader billeder direkte til et fælles album. Genoplev festen dagen efter.</div>
+        <div class="feature-badge badge-live" id="f5-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🎲</div>
-        <div class="feature-name">Egne kortpakker</div>
-        <div class="feature-desc">Lav dine egne druk-kort med tilpassede regler og spørgsmål til netop jeres vennekreds.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f6-name">Egne kortpakker</div>
+        <div class="feature-desc" id="f6-desc">Lav dine egne druk-kort med tilpassede regler og spørgsmål til netop jeres vennekreds.</div>
+        <div class="feature-badge badge-live" id="f6-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🥤</div>
-        <div class="feature-name">Ingen pres</div>
-        <div class="feature-desc">Du vælger selv inden hvert spil om du drikker eller ej. Alle er stadig med — uanset hvad der er i glasset.</div>
-        <div class="feature-badge badge-live">LIVE NU</div>
+        <div class="feature-name" id="f7-name">Ingen pres</div>
+        <div class="feature-desc" id="f7-desc">Du vælger selv inden hvert spil om du drikker eller ej. Alle er stadig med — uanset hvad der er i glasset.</div>
+        <div class="feature-badge badge-live" id="f7-badge">LIVE NU</div>
       </div>
       <div class="feature-card">
         <div class="feature-icon">🎪</div>
-        <div class="feature-name">Til alle begivenheder</div>
-        <div class="feature-desc">Familiemiddag, teambuilding, bryllupsaften — vi bygger kortpakker og spil til langt mere end fester.</div>
-        <div class="feature-badge badge-soon">PÅ VEJ</div>
+        <div class="feature-name" id="f8-name">Til alle begivenheder</div>
+        <div class="feature-desc" id="f8-desc">Familiemiddag, teambuilding, bryllupsaften — vi bygger kortpakker og spil til langt mere end fester.</div>
+        <div class="feature-badge badge-soon" id="f8-badge">PÅ VEJ</div>
       </div>
     </div>
   </section>
@@ -431,9 +454,9 @@
 
   <!-- MOCKUPS -->
   <section>
-    <span class="section-badge">ET KIG PÅ APPEN</span>
-    <h2 class="section-title">Smukt. Hurtigt. Made for fester.</h2>
-    <p class="section-sub">
+    <span class="section-badge" id="mock-badge">ET KIG PÅ APPEN</span>
+    <h2 class="section-title" id="mock-title">Smukt. Hurtigt. Made for fester.</h2>
+    <p class="section-sub" id="mock-sub">
       Mørkt design der sidder rigtigt på en fest. Hvert spil starter på under 30 sekunder.
     </p>
 
@@ -474,7 +497,7 @@
             <div class="mock-avatar" style="opacity:0.4;">L</div>
             <div class="mock-avatar" style="opacity:0.4;">S</div>
           </div>
-          <div class="mock-btn">Næste kort →</div>
+          <div class="mock-btn" id="mock-next-btn">Næste kort →</div>
         </div>
       </div>
 
@@ -505,9 +528,9 @@
 
   <!-- ABOUT -->
   <section>
-    <span class="section-badge">HVEM STÅR BAG?</span>
-    <h2 class="section-title">Historien bag HOSTED</h2>
-    <p class="section-sub">
+    <span class="section-badge" id="about-badge">HVEM STÅR BAG?</span>
+    <h2 class="section-title" id="about-title">Historien bag HOSTED</h2>
+    <p class="section-sub" id="about-sub">
       HOSTED er ikke lavet af et stort firma. Det startede med én frustration og én idé.
     </p>
 
@@ -515,8 +538,8 @@
       <div class="about-avatar">👩‍💻</div>
       <div>
         <div class="about-name">Ingrid Klein</div>
-        <div class="about-role">Grundlægger & Developer</div>
-        <div class="about-text">
+        <div class="about-role" id="ingrid-role">Grundlægger & Developer</div>
+        <div class="about-text" id="ingrid-text">
           Jeg var træt af at det altid var en ny app, et nyt abonnement man altid glemmer at
           afmelde — og alligevel endte alle med at sidde med hver sin telefon og spille hvert
           sit spil. Ingen fælles oplevelse.
@@ -525,8 +548,8 @@
           — fra den store fredagsfest til den rolige familieaften med samtalekort. Og du
           bestemmer selv om der er alkohol i glasset. Man er med uanset hvad.
         </div>
-        <a href="mailto:ingridklein2003@gmail.com" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:700;color:var(--lime);text-decoration:none;">
-          Skriv til mig → ingridklein2003@gmail.com
+        <a href="mailto:hosted.mobileapp@gmail.com" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:700;color:var(--lime);text-decoration:none;" id="ingrid-email">
+          Skriv til os → hosted.mobileapp@gmail.com
         </a>
       </div>
     </div>
@@ -535,8 +558,8 @@
       <div class="about-avatar" style="background: linear-gradient(135deg, #00e5ff, #7b61ff);">🤝</div>
       <div>
         <div class="about-name">Mikkel</div>
-        <div class="about-role">Medstifter & Forretning</div>
-        <div class="about-text">
+        <div class="about-role" id="mikkel-role">Medstifter & Forretning</div>
+        <div class="about-text" id="mikkel-text">
           Med sin erfaring og forretningsmæssige viden er Mikkel kommet med på rejsen —
           og bidrager til at tage HOSTED fra idé til noget der reelt når ud til folk.
         </div>
@@ -548,17 +571,18 @@
 
   <!-- BOTTOM CTA -->
   <section style="text-align:center; padding: 80px 24px 40px;">
-    <h2 class="section-title">Klar til at prøve det?</h2>
-    <p class="section-sub" style="margin-bottom:32px;">
+    <h2 class="section-title" id="cta-title">Klar til at prøve det?</h2>
+    <p class="section-sub" style="margin-bottom:32px;" id="cta-sub">
       Enten har du allerede en festkode fra en ven — eller du kan tilmelde dig nu og
       vente til appen er klar for alle.
     </p>
     <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-      <a href="/" style="background:var(--lime);color:#0d0d0d;text-decoration:none;
+      <a href="/" id="cta-join-btn" style="background:var(--lime);color:#0d0d0d;text-decoration:none;
         font-size:16px;font-weight:800;padding:18px 32px;border-radius:50px;display:inline-block;">
         Join en fest med kode →
       </a>
       <a href="#" onclick="document.querySelector('.waitlist-input').focus();window.scrollTo({top:0,behavior:'smooth'});return false;"
+        id="cta-wl-btn"
         style="background:#1a1a1a;color:#fff;text-decoration:none;border:1px solid #333;
         font-size:16px;font-weight:800;padding:18px 32px;border-radius:50px;display:inline-block;">
         Tilmeld venteliste
@@ -569,17 +593,189 @@
   <!-- FOOTER -->
   <footer>
     <div class="footer-logo">HOSTED</div>
-    <p style="margin-bottom:8px;">Bygget med ❤️</p>
+    <p style="margin-bottom:8px;" id="footer-built">Bygget med ❤️</p>
     <p>
-      <a href="/">Tilmeld fest</a> ·
-      <a href="mailto:ingridklein2003@gmail.com" style="color:var(--sub);">Kontakt</a>
+      <a href="/" id="footer-join">Tilmeld fest</a> ·
+      <a href="mailto:hosted.mobileapp@gmail.com" style="color:var(--sub);" id="footer-contact">Kontakt</a>
     </p>
-    <p style="margin-top:16px; color:#222;">© 2025 HOSTED · Beta version</p>
+    <p style="margin-top:16px; color:#222;" id="footer-copy">© 2025 HOSTED · Beta version</p>
   </footer>
 
   <script>
     const SUPABASE_URL = 'https://mfebfftytmjhextklsgj.supabase.co';
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8';
+
+    let currentLang = 'da';
+
+    const LANG = {
+      da: {
+        // Hero
+        hero_badge: '🎉 BETA — KOM MED TIDLIGT',
+        hero_tagline: 'kortspil · impostor · fotoalbum · og meget mere',
+        hero_desc: 'Den app du altid har manglet til fester, familiemiddage og alt derimellem. Saml alle i ét rum — spil spillene, del billederne, stem på hinanden. Ingen download nødvendig for gæster. Bare scan og join.',
+        wl_title: '🔔 Få besked når appen lanceres',
+        wl_sub: 'HOSTED er i beta. Skriv dig op og vær en af de første til at få adgang — til iOS, Android og web.',
+        wl_btn: 'Tilmeld',
+        wl_success: 'Du er på listen! Vi skriver, når det er klar.',
+        wl_no_spam: 'Ingen spam. Kun én mail når vi launcher.',
+        scroll_hint: 'SCROLL OG LÆS MERE',
+        // Features
+        feat_badge: 'HVAD KAN HOSTED?',
+        feat_title: 'Alt hvad en fest skal bruge — ét sted',
+        feat_sub: 'HOSTED er designet til at samle folk — uanset om det er en fest, en familiemiddag eller en hyggelig aften med vennerne. Og du bestemmer selv om der er alkohol i glasset.',
+        f1_name: 'Kortspil', f1_desc: '6 pakker med druk-kort — fra blid opvarmning til hardcore. Gæster følger med live på websiden.', f1_badge: 'LIVE NU',
+        f2_name: 'Hvem er mest tilbøjelig?', f2_desc: 'Alle gæster stemmer i realtid via websiden. Den med flest stemmer drikker.', f2_badge: 'LIVE NU',
+        f3_name: 'Impostor', f3_desc: 'Find spionen i gruppen. Fungerer med 3–12 spillere og tre sværhedsgrader.', f3_badge: 'LIVE NU',
+        f4_name: 'Turnering', f4_desc: 'Lav en bracket og spil hvad som helst. Beerponq, sten-saks-papir, hvem som helst.', f4_badge: 'LIVE NU',
+        f5_name: 'Fotoalbum', f5_desc: 'Alle gæster uploader billeder direkte til et fælles album. Genoplev festen dagen efter.', f5_badge: 'LIVE NU',
+        f6_name: 'Egne kortpakker', f6_desc: 'Lav dine egne druk-kort med tilpassede regler og spørgsmål til netop jeres vennekreds.', f6_badge: 'LIVE NU',
+        f7_name: 'Ingen pres', f7_desc: 'Du vælger selv inden hvert spil om du drikker eller ej. Alle er stadig med — uanset hvad der er i glasset.', f7_badge: 'LIVE NU',
+        f8_name: 'Til alle begivenheder', f8_desc: 'Familiemiddag, teambuilding, bryllupsaften — vi bygger kortpakker og spil til langt mere end fester.', f8_badge: 'PÅ VEJ',
+        // Mockup
+        mock_badge: 'ET KIG PÅ APPEN',
+        mock_title: 'Smukt. Hurtigt. Made for fester.',
+        mock_sub: 'Mørkt design der sidder rigtigt på en fest. Hvert spil starter på under 30 sekunder.',
+        mock_next_btn: 'Næste kort →',
+        // About
+        about_badge: 'HVEM STÅR BAG?',
+        about_title: 'Historien bag HOSTED',
+        about_sub: 'HOSTED er ikke lavet af et stort firma. Det startede med én frustration og én idé.',
+        ingrid_role: 'Grundlægger & Developer',
+        ingrid_text: 'Jeg var træt af at det altid var en ny app, et nyt abonnement man altid glemmer at afmelde — og alligevel endte alle med at sidde med hver sin telefon og spille hvert sit spil. Ingen fælles oplevelse.<br><br>Så jeg byggede HOSTED. Én app, én kode, alle samlet. Det skal kunne bruges til alt — fra den store fredagsfest til den rolige familieaften med samtalekort. Og du bestemmer selv om der er alkohol i glasset. Man er med uanset hvad.',
+        ingrid_email: 'Skriv til os → hosted.mobileapp@gmail.com',
+        mikkel_role: 'Medstifter & Forretning',
+        mikkel_text: 'Med sin erfaring og forretningsmæssige viden er Mikkel kommet med på rejsen — og bidrager til at tage HOSTED fra idé til noget der reelt når ud til folk.',
+        // CTA
+        cta_title: 'Klar til at prøve det?',
+        cta_sub: 'Enten har du allerede en festkode fra en ven — eller du kan tilmelde dig nu og vente til appen er klar for alle.',
+        cta_join: 'Join en fest med kode →',
+        cta_wl: 'Tilmeld venteliste',
+        // Footer
+        footer_built: 'Bygget med ❤️',
+        footer_join: 'Tilmeld fest',
+        footer_contact: 'Kontakt',
+        footer_copy: '© 2025 HOSTED · Beta version',
+        // email placeholder
+        email_placeholder: 'din@email.dk',
+        wl_loading: '…',
+        wl_alert: 'Noget gik galt — prøv igen.',
+      },
+      en: {
+        // Hero
+        hero_badge: '🎉 BETA — JOIN EARLY',
+        hero_tagline: 'card games · impostor · photo album · and much more',
+        hero_desc: 'The app you\'ve always been missing for parties, family dinners, and everything in between. Gather everyone in one place — play the games, share the photos, vote on each other. No download needed for guests. Just scan and join.',
+        wl_title: '🔔 Get notified when the app launches',
+        wl_sub: 'HOSTED is in beta. Sign up and be one of the first to get access — on iOS, Android, and web.',
+        wl_btn: 'Sign up',
+        wl_success: 'You\'re on the list! We\'ll be in touch when it\'s ready.',
+        wl_no_spam: 'No spam. Just one email when we launch.',
+        scroll_hint: 'SCROLL TO READ MORE',
+        // Features
+        feat_badge: 'WHAT CAN HOSTED DO?',
+        feat_title: 'Everything a party needs — in one place',
+        feat_sub: 'HOSTED is designed to bring people together — whether it\'s a party, a family dinner, or a cozy night with friends. And you decide whether there\'s alcohol in the glass.',
+        f1_name: 'Card games', f1_desc: '6 packs of drinking cards — from gentle warm-up to hardcore. Guests follow along live on the website.', f1_badge: 'LIVE NOW',
+        f2_name: 'Who is most likely?', f2_desc: 'All guests vote in real time via the website. The one with the most votes drinks.', f2_badge: 'LIVE NOW',
+        f3_name: 'Impostor', f3_desc: 'Find the spy in the group. Works with 3–12 players and three difficulty levels.', f3_badge: 'LIVE NOW',
+        f4_name: 'Tournament', f4_desc: 'Create a bracket and play anything. Beer pong, rock-paper-scissors, whoever you want.', f4_badge: 'LIVE NOW',
+        f5_name: 'Photo album', f5_desc: 'All guests upload photos directly to a shared album. Relive the party the day after.', f5_badge: 'LIVE NOW',
+        f6_name: 'Custom card packs', f6_desc: 'Create your own cards with custom rules and questions tailored to your friend group.', f6_badge: 'LIVE NOW',
+        f7_name: 'No pressure', f7_desc: 'You choose before each game whether you drink or not. Everyone is still included — no matter what\'s in the glass.', f7_badge: 'LIVE NOW',
+        f8_name: 'For all occasions', f8_desc: 'Family dinner, team building, bachelorette party — we\'re building card packs and games for much more than parties.', f8_badge: 'COMING SOON',
+        // Mockup
+        mock_badge: 'A PEEK AT THE APP',
+        mock_title: 'Beautiful. Fast. Made for parties.',
+        mock_sub: 'Dark design that feels right at a party. Every game starts in under 30 seconds.',
+        mock_next_btn: 'Next card →',
+        // About
+        about_badge: 'WHO\'S BEHIND IT?',
+        about_title: 'The story behind HOSTED',
+        about_sub: 'HOSTED wasn\'t built by a big company. It started with one frustration and one idea.',
+        ingrid_role: 'Founder & Developer',
+        ingrid_text: 'I was tired of it always being a new app, a new subscription you always forget to cancel — and yet everyone ended up sitting with their own phone playing their own game. No shared experience.<br><br>So I built HOSTED. One app, one code, everyone together. It should work for everything — from a big Friday party to a quiet family evening with conversation cards. And you decide whether there\'s alcohol in the glass. You\'re in no matter what.',
+        ingrid_email: 'Contact us → hosted.mobileapp@gmail.com',
+        mikkel_role: 'Co-founder & Business',
+        mikkel_text: 'With his experience and business knowledge, Mikkel has joined the journey — and helps take HOSTED from idea to something that actually reaches people.',
+        // CTA
+        cta_title: 'Ready to try it?',
+        cta_sub: 'Either you already have a party code from a friend — or you can sign up now and wait until the app is ready for everyone.',
+        cta_join: 'Join a party with code →',
+        cta_wl: 'Join the waitlist',
+        // Footer
+        footer_built: 'Built with ❤️',
+        footer_join: 'Join a party',
+        footer_contact: 'Contact',
+        footer_copy: '© 2025 HOSTED · Beta version',
+        // email placeholder
+        email_placeholder: 'your@email.com',
+        wl_loading: '…',
+        wl_alert: 'Something went wrong — please try again.',
+      }
+    };
+
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.textContent = val;
+    }
+    function setHTML(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.innerHTML = val;
+    }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      const s = LANG[lang];
+      // Hero
+      setText('hero-badge', s.hero_badge);
+      setText('hero-tagline', s.hero_tagline);
+      setText('hero-description', s.hero_desc);
+      setText('wl-title', s.wl_title);
+      setText('wl-sub', s.wl_sub);
+      setText('hero-btn', s.wl_btn);
+      setText('hero-success-text', s.wl_success);
+      setText('wl-no-spam', s.wl_no_spam);
+      setText('scroll-hint-text', s.scroll_hint);
+      const heroEmail = document.getElementById('hero-email');
+      if (heroEmail) heroEmail.placeholder = s.email_placeholder;
+      // Features
+      setText('feat-badge', s.feat_badge);
+      setText('feat-title', s.feat_title);
+      setText('feat-sub', s.feat_sub);
+      for (let i = 1; i <= 8; i++) {
+        setText(`f${i}-name`, s[`f${i}_name`]);
+        setText(`f${i}-desc`, s[`f${i}_desc`]);
+        setText(`f${i}-badge`, s[`f${i}_badge`]);
+      }
+      // Mockup
+      setText('mock-badge', s.mock_badge);
+      setText('mock-title', s.mock_title);
+      setText('mock-sub', s.mock_sub);
+      setText('mock-next-btn', s.mock_next_btn);
+      // About
+      setText('about-badge', s.about_badge);
+      setText('about-title', s.about_title);
+      setText('about-sub', s.about_sub);
+      setText('ingrid-role', s.ingrid_role);
+      setHTML('ingrid-text', s.ingrid_text);
+      setText('ingrid-email', s.ingrid_email);
+      setText('mikkel-role', s.mikkel_role);
+      setText('mikkel-text', s.mikkel_text);
+      // CTA
+      setText('cta-title', s.cta_title);
+      setText('cta-sub', s.cta_sub);
+      setText('cta-join-btn', s.cta_join);
+      setText('cta-wl-btn', s.cta_wl);
+      // Footer
+      setText('footer-built', s.footer_built);
+      setText('footer-join', s.footer_join);
+      setText('footer-contact', s.footer_contact);
+      setText('footer-copy', s.footer_copy);
+      // Buttons
+      document.getElementById('btnDA').classList.toggle('active', lang === 'da');
+      document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    }
 
     async function submitHeroWaitlist() {
       const input = document.getElementById('hero-email');
@@ -587,12 +783,13 @@
       const success = document.getElementById('hero-success');
       const row = document.getElementById('hero-waitlist-row');
       const email = input.value.trim();
+      const s = LANG[currentLang];
       if (!email || !email.includes('@')) {
         input.style.borderColor = '#ff4444';
         setTimeout(() => input.style.borderColor = '', 1500);
         return;
       }
-      btn.disabled = true; btn.textContent = '…';
+      btn.disabled = true; btn.textContent = s.wl_loading;
       try {
         await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
           method: 'POST',
