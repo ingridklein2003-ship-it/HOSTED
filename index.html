@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HOSTED — Join fest</title>
+  <title>HOSTED — Join Party</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -190,6 +190,40 @@
       line-height: 1.8;
     }
 
+    .footer a {
+      color: #666;
+      text-decoration: none;
+    }
+
+    .footer a:hover { color: #c8ff00; }
+
+    .lang-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-btn {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .lang-btn.active {
+      background: #c8ff00;
+      border-color: #c8ff00;
+      color: #0d0d0d;
+    }
+
     @media (max-width: 360px) {
       h1 { font-size: 40px; letter-spacing: 5px; }
       .code { font-size: 36px; letter-spacing: 6px; }
@@ -198,38 +232,44 @@
 </head>
 <body>
   <div class="glow-top"></div>
+
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnDA" onclick="setLang('da')">DA</button>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
+
   <div class="container">
 
-    <div class="badge">FEST-APP</div>
+    <div class="badge" id="txt-badge">FEST-APP</div>
     <h1>HOSTED</h1>
-    <p class="tagline">kortspil · fotoalbum · druk-tæller</p>
+    <p class="tagline" id="txt-tagline">kortspil · fotoalbum · druk-tæller</p>
 
     <div class="code-card" id="codeCard">
-      <p class="code-label">FESTKODE</p>
+      <p class="code-label" id="txt-code-label">FESTKODE</p>
       <div class="code" id="codeDisplay">——</div>
       <p class="code-hint" id="codeHint">Henter kode...</p>
     </div>
 
-    <a href="https://testflight.apple.com/join/ENz1vJj7" class="download-btn">
+    <a href="https://testflight.apple.com/join/ENz1vJj7" class="download-btn" id="txt-dl-btn">
       ⬇️ Download HOSTED gratis
     </a>
-    <p class="download-sub">Kræver TestFlight · Kun iPhone · iOS 17+</p>
+    <p class="download-sub" id="txt-dl-sub">Kræver TestFlight · Kun iPhone · iOS 17+</p>
 
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-title">Download</div>
-        <div class="step-sub">Tryk knappen ovenfor</div>
+        <div class="step-title" id="txt-s1-title">Download</div>
+        <div class="step-sub" id="txt-s1-sub">Tryk knappen ovenfor</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-title">Åbn appen</div>
-        <div class="step-sub">Tryk "Join fest"</div>
+        <div class="step-title" id="txt-s2-title">Åbn appen</div>
+        <div class="step-sub" id="txt-s2-sub">Tryk "Join fest"</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-title">Indtast kode</div>
-        <div class="step-sub">Se koden ovenfor</div>
+        <div class="step-title" id="txt-s3-title">Indtast kode</div>
+        <div class="step-sub" id="txt-s3-sub">Se koden ovenfor</div>
       </div>
     </div>
 
@@ -238,51 +278,112 @@
     <div class="features">
       <div class="feature">
         <div class="feature-emoji">🃏</div>
-        <div class="feature-name">Kortspil</div>
+        <div class="feature-name" id="txt-f1">Kortspil</div>
       </div>
       <div class="feature">
         <div class="feature-emoji">📸</div>
-        <div class="feature-name">Fotoalbum</div>
+        <div class="feature-name" id="txt-f2">Fotoalbum</div>
       </div>
       <div class="feature">
         <div class="feature-emoji">🍺</div>
-        <div class="feature-name">Druk-tæller</div>
+        <div class="feature-name" id="txt-f3">Druk-tæller</div>
       </div>
       <div class="feature">
         <div class="feature-emoji">🎭</div>
-        <div class="feature-name">Imposter</div>
+        <div class="feature-name" id="txt-f4">Imposter</div>
       </div>
       <div class="feature">
         <div class="feature-emoji">💬</div>
-        <div class="feature-name">Beskeder</div>
+        <div class="feature-name" id="txt-f5">Beskeder</div>
       </div>
       <div class="feature">
         <div class="feature-emoji">🏆</div>
-        <div class="feature-name">Turnering</div>
+        <div class="feature-name" id="txt-f6">Turnering</div>
       </div>
     </div>
 
-    <p class="footer">
+    <p class="footer" id="txt-footer">
       HOSTED beta · kun til iPhone<br>
-      Spørgsmål? Skriv til Ingrid 🥳
+      Spørgsmål? <a href="mailto:hosted.mobileapp@gmail.com">hosted.mobileapp@gmail.com</a>
     </p>
 
   </div>
 
   <script>
+    const strings = {
+      da: {
+        badge: 'FEST-APP',
+        tagline: 'kortspil · fotoalbum · druk-tæller',
+        codeLabel: 'FESTKODE',
+        codeWithCode: 'Brug denne kode i appen for at joine festen',
+        codeNoCode: 'Bed værten om at dele linket med festkoden',
+        dlBtn: '⬇️ Download HOSTED gratis',
+        dlSub: 'Kræver TestFlight · Kun iPhone · iOS 17+',
+        s1Title: 'Download', s1Sub: 'Tryk knappen ovenfor',
+        s2Title: 'Åbn appen', s2Sub: 'Tryk "Join fest"',
+        s3Title: 'Indtast kode', s3Sub: 'Se koden ovenfor',
+        f1: 'Kortspil', f2: 'Fotoalbum', f3: 'Druk-tæller',
+        f4: 'Imposter', f5: 'Beskeder', f6: 'Turnering',
+        footer: 'HOSTED beta · kun til iPhone<br>Spørgsmål? <a href="mailto:hosted.mobileapp@gmail.com">hosted.mobileapp@gmail.com</a>',
+      },
+      en: {
+        badge: 'PARTY APP',
+        tagline: 'card games · photo album · drink counter',
+        codeLabel: 'PARTY CODE',
+        codeWithCode: 'Use this code in the app to join the party',
+        codeNoCode: 'Ask the host to share the link with the party code',
+        dlBtn: '⬇️ Download HOSTED for free',
+        dlSub: 'Requires TestFlight · iPhone only · iOS 17+',
+        s1Title: 'Download', s1Sub: 'Tap the button above',
+        s2Title: 'Open the app', s2Sub: 'Tap "Join party"',
+        s3Title: 'Enter code', s3Sub: 'See the code above',
+        f1: 'Card games', f2: 'Photo album', f3: 'Drink counter',
+        f4: 'Imposter', f5: 'Messages', f6: 'Tournament',
+        footer: 'HOSTED beta · iPhone only<br>Questions? <a href="mailto:hosted.mobileapp@gmail.com">hosted.mobileapp@gmail.com</a>',
+      }
+    };
+
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const display = document.getElementById('codeDisplay');
     const hint = document.getElementById('codeHint');
 
+    let currentLang = 'da';
+
+    function setLang(lang) {
+      currentLang = lang;
+      const s = strings[lang];
+      document.documentElement.lang = lang;
+      document.getElementById('txt-badge').textContent = s.badge;
+      document.getElementById('txt-tagline').textContent = s.tagline;
+      document.getElementById('txt-code-label').textContent = s.codeLabel;
+      hint.textContent = code ? s.codeWithCode : s.codeNoCode;
+      document.getElementById('txt-dl-btn').textContent = s.dlBtn;
+      document.getElementById('txt-dl-sub').textContent = s.dlSub;
+      document.getElementById('txt-s1-title').textContent = s.s1Title;
+      document.getElementById('txt-s1-sub').textContent = s.s1Sub;
+      document.getElementById('txt-s2-title').textContent = s.s2Title;
+      document.getElementById('txt-s2-sub').textContent = s.s2Sub;
+      document.getElementById('txt-s3-title').textContent = s.s3Title;
+      document.getElementById('txt-s3-sub').textContent = s.s3Sub;
+      document.getElementById('txt-f1').textContent = s.f1;
+      document.getElementById('txt-f2').textContent = s.f2;
+      document.getElementById('txt-f3').textContent = s.f3;
+      document.getElementById('txt-f4').textContent = s.f4;
+      document.getElementById('txt-f5').textContent = s.f5;
+      document.getElementById('txt-f6').textContent = s.f6;
+      document.getElementById('txt-footer').innerHTML = s.footer;
+      document.getElementById('btnDA').classList.toggle('active', lang === 'da');
+      document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    }
+
     if (code) {
       display.textContent = code.toUpperCase();
-      hint.textContent = 'Brug denne kode i appen for at joine festen';
     } else {
       display.textContent = '——';
       display.style.color = '#333';
-      hint.textContent = 'Bed værten om at dele linket med festkoden';
     }
+    setLang('da');
   </script>
 </body>
 </html>
