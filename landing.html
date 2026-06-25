@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>HOSTED — Fest-appen du har manglet</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --lime: #c8ff00;
+      --bg: #0d0d0d;
+      --card: #161616;
+      --border: #2a2a2a;
+      --sub: #666;
+      --cyan: #00e5ff;
+      --magenta: #ff2d78;
+    }
+
+    body {
+      background: var(--bg);
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 500px;
+      background: radial-gradient(ellipse, rgba(200,255,0,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--lime); color: var(--bg);
+      font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      padding: 6px 18px; border-radius: 30px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(56px, 15vw, 96px);
+      font-weight: 900;
+      letter-spacing: 10px;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+    .hero-tagline {
+      font-size: clamp(16px, 4vw, 20px);
+      color: var(--sub);
+      letter-spacing: 2px;
+      margin-bottom: 40px;
+    }
+    .hero-description {
+      font-size: 18px;
+      color: #aaa;
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 48px;
+    }
+
+    /* ── WAITLIST FORM ── */
+    .waitlist-box {
+      background: var(--card);
+      border: 1px solid rgba(200,255,0,0.3);
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    .waitlist-box h3 {
+      font-size: 18px; font-weight: 800;
+      color: #fff; margin-bottom: 6px;
+    }
+    .waitlist-box p {
+      font-size: 14px; color: var(--sub);
+      margin-bottom: 20px; line-height: 1.5;
+    }
+    .waitlist-row { display: flex; gap: 8px; }
+    .waitlist-input {
+      flex: 1;
+      background: #111; border: 1px solid var(--border);
+      border-radius: 14px; color: #fff;
+      font-size: 16px; padding: 16px 18px;
+      outline: none; -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-input:focus { border-color: var(--lime); }
+    .waitlist-input::placeholder { color: #333; }
+    .waitlist-btn {
+      background: var(--lime); color: var(--bg);
+      border: none; border-radius: 14px;
+      font-size: 15px; font-weight: 800;
+      padding: 16px 22px; cursor: pointer;
+      white-space: nowrap; -webkit-appearance: none;
+      transition: opacity 0.15s, transform 0.1s;
+      flex-shrink: 0;
+    }
+    .waitlist-btn:active { transform: scale(0.97); }
+    .waitlist-btn:disabled { opacity: 0.4; cursor: default; }
+    .waitlist-success {
+      display: none;
+      align-items: center; gap: 10px;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.3);
+      border-radius: 14px; padding: 16px 20px;
+      font-size: 15px; font-weight: 700; color: var(--lime);
+    }
+    .count-text {
+      font-size: 12px; color: var(--sub);
+      text-align: center; margin-top: 12px;
+    }
+    .scroll-hint {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px; margin-top: 40px; color: var(--sub);
+      font-size: 12px; letter-spacing: 2px; font-weight: 700;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint svg { opacity: 0.4; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ── SECTION ── */
+    section {
+      padding: 80px 24px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .section-badge {
+      font-size: 11px; font-weight: 800; letter-spacing: 3px;
+      color: var(--lime); margin-bottom: 12px;
+      display: block;
+    }
+    .section-title {
+      font-size: clamp(28px, 6vw, 42px);
+      font-weight: 900; color: #fff;
+      line-height: 1.15; margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 16px; color: var(--sub);
+      line-height: 1.7;
+    }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 40px;
+    }
+    @media (max-width: 480px) { .features-grid { grid-template-columns: 1fr; } }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: #444; }
+    .feature-icon { font-size: 32px; margin-bottom: 12px; }
+    .feature-name {
+      font-size: 16px; font-weight: 800; color: #fff;
+      margin-bottom: 6px;
+    }
+    .feature-desc { font-size: 14px; color: var(--sub); line-height: 1.5; }
+    .feature-badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 800; letter-spacing: 1px;
+      padding: 3px 10px; border-radius: 20px;
+      margin-top: 10px;
+    }
+    .badge-live { background: rgba(200,255,0,0.15); color: var(--lime); }
+    .badge-soon { background: rgba(100,100,100,0.2); color: #555; }
+
+    /* ── MOCKUP ── */
+    .mockup-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .phone-mockup {
+      width: 160px;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 28px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .phone-screen {
+      padding: 16px 12px;
+      min-height: 280px;
+    }
+    .mock-status {
+      display: flex; justify-content: space-between;
+      font-size: 9px; color: #444; margin-bottom: 12px;
+    }
+    .mock-badge {
+      background: var(--lime); color: #000;
+      font-size: 8px; font-weight: 800; letter-spacing: 1px;
+      padding: 2px 8px; border-radius: 10px;
+      display: inline-block; margin-bottom: 8px;
+    }
+    .mock-title {
+      font-size: 14px; font-weight: 900; color: #fff;
+      letter-spacing: 3px; margin-bottom: 4px;
+    }
+    .mock-sub { font-size: 9px; color: #555; margin-bottom: 14px; }
+    .mock-card {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .mock-card-title { font-size: 10px; font-weight: 800; color: #fff; margin-bottom: 3px; }
+    .mock-card-sub { font-size: 9px; color: #555; }
+    .mock-live-dot {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: var(--lime); border-radius: 50%;
+      margin-right: 4px;
+    }
+    .mock-player-row {
+      display: flex; gap: 6px; margin-top: 8px;
+    }
+    .mock-avatar {
+      width: 28px; height: 28px;
+      background: #222; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+    }
+    .mock-btn {
+      background: var(--lime); color: #000;
+      border-radius: 20px; padding: 8px;
+      font-size: 9px; font-weight: 800;
+      text-align: center; margin-top: 10px;
+    }
+    .mock-card-game {
+      background: #1a1a1a;
+      border: 1.5px solid rgba(200,255,0,0.4);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .mock-card-text {
+      font-size: 10px; font-weight: 800; color: #fff; line-height: 1.4;
+    }
+
+    /* ── ABOUT ── */
+    .about-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 32px;
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      margin-top: 40px;
+    }
+    @media (max-width: 480px) { .about-card { flex-direction: column; } }
+    .about-avatar {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--lime), var(--cyan));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .about-name { font-size: 20px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+    .about-role { font-size: 13px; color: var(--lime); font-weight: 700; margin-bottom: 12px; }
+    .about-text { font-size: 15px; color: #888; line-height: 1.7; }
+
+    /* ── ROADMAP ── */
+    .roadmap-list { margin-top: 32px; }
+    .roadmap-item {
+      display: flex; gap: 16px; align-items: flex-start;
+      padding: 16px 0;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .roadmap-item:last-child { border-bottom: none; }
+    .roadmap-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .dot-done { background: var(--lime); }
+    .dot-now { background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
+    .dot-next { background: #333; border: 1px solid #444; }
+    .roadmap-label { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 3px; }
+    .roadmap-sub { font-size: 13px; color: var(--sub); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      border-top: 1px solid #1a1a1a;
+      color: #333;
+      font-size: 13px;
+    }
+    footer a { color: var(--lime); text-decoration: none; }
+    .footer-logo {
+      font-size: 28px; font-weight: 900; letter-spacing: 6px;
+      color: #fff; margin-bottom: 16px;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px; background: #1a1a1a;
+      max-width: 680px; margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge">🎉 BETA — KOM MED TIDLIGT</div>
+    <h1>HOSTED</h1>
+    <p class="hero-tagline">kortspil · impostor · fotoalbum · og meget mere</p>
+    <p class="hero-description">
+      Den app du altid har manglet til fester, familiemiddage og alt derimellem.
+      Saml alle i ét rum — spil spillene, del billederne, stem på hinanden.
+      Ingen download nødvendig for gæster. Bare scan og join.
+    </p>
+
+    <div class="waitlist-box">
+      <h3>🔔 Få besked når appen lanceres</h3>
+      <p>HOSTED er i beta. Skriv dig op og vær en af de første til at få adgang — til iOS, Android og web.</p>
+      <div class="waitlist-row" id="hero-waitlist-row">
+        <input class="waitlist-input" id="hero-email" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="hero-btn" onclick="submitHeroWaitlist()">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="hero-success">
+        <span>✓</span> Du er på listen! Vi skriver, når det er klar.
+      </div>
+      <p class="count-text">Ingen spam. Kun én mail når vi launcher.</p>
+    </div>
+    <div class="scroll-hint">
+      <span>SCROLL OG LÆS MERE</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section>
+    <span class="section-badge">HVAD KAN HOSTED?</span>
+    <h2 class="section-title">Alt hvad en fest skal bruge — ét sted</h2>
+    <p class="section-sub">
+      HOSTED er designet til at samle folk — uanset om det er en fest, en familiemiddag
+      eller en hyggelig aften med vennerne. Og du bestemmer selv om der er alkohol i glasset.
+    </p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🃏</div>
+        <div class="feature-name">Kortspil</div>
+        <div class="feature-desc">6 pakker med druk-kort — fra blid opvarmning til hardcore. Gæster følger med live på websiden.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👉</div>
+        <div class="feature-name">Hvem er mest tilbøjelig?</div>
+        <div class="feature-desc">Alle gæster stemmer i realtid via websiden. Den med flest stemmer drikker.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <div class="feature-name">Impostor</div>
+        <div class="feature-desc">Find spionen i gruppen. Fungerer med 3–12 spillere og tre sværhedsgrader.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-name">Turnering</div>
+        <div class="feature-desc">Lav en bracket og spil hvad som helst. Beerponq, sten-saks-papir, hvem som helst.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📸</div>
+        <div class="feature-name">Fotoalbum</div>
+        <div class="feature-desc">Alle gæster uploader billeder direkte til et fælles album. Genoplev festen dagen efter.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎲</div>
+        <div class="feature-name">Egne kortpakker</div>
+        <div class="feature-desc">Lav dine egne druk-kort med tilpassede regler og spørgsmål til netop jeres vennekreds.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🥤</div>
+        <div class="feature-name">Ingen pres</div>
+        <div class="feature-desc">Du vælger selv inden hvert spil om du drikker eller ej. Alle er stadig med — uanset hvad der er i glasset.</div>
+        <div class="feature-badge badge-live">LIVE NU</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎪</div>
+        <div class="feature-name">Til alle begivenheder</div>
+        <div class="feature-desc">Familiemiddag, teambuilding, bryllupsaften — vi bygger kortpakker og spil til langt mere end fester.</div>
+        <div class="feature-badge badge-soon">PÅ VEJ</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- MOCKUPS -->
+  <section>
+    <span class="section-badge">ET KIG PÅ APPEN</span>
+    <h2 class="section-title">Smukt. Hurtigt. Made for fester.</h2>
+    <p class="section-sub">
+      Mørkt design der sidder rigtigt på en fest. Hvert spil starter på under 30 sekunder.
+    </p>
+
+    <div class="mockup-row">
+      <!-- Hjemskærm -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="mock-status"><span>9:41</span><span>●●●</span></div>
+          <div class="mock-badge">FEST-APP</div>
+          <div class="mock-title">HOSTED</div>
+          <div class="mock-sub">Hej, Ingrid 😎</div>
+          <div class="mock-card">
+            <div style="font-size:8px;color:#c8ff00;font-weight:800;margin-bottom:4px;display:flex;align-items:center;"><span class="mock-live-dot"></span>FEST LIVE</div>
+            <div class="mock-card-title">Vintertorsdag 🎉</div>
+            <div class="mock-card-sub">3 gæster tilmeldt</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
+            <div class="mock-card"><div class="mock-card-title">🃏 Kortspil</div></div>
+            <div class="mock-card"><div class="mock-card-title">🎭 Impostor</div></div>
+            <div class="mock-card"><div class="mock-card-title">👉 Tilbøjelig</div></div>
+            <div class="mock-card"><div class="mock-card-title">🏆 Turnering</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aktivt spil -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="mock-status"><span>9:41</span><span>●●●</span></div>
+          <div style="font-size:10px;font-weight:800;color:#fff;margin-bottom:10px;">🔥 Opvarmning</div>
+          <div style="font-size:9px;color:#555;margin-bottom:12px;">Kort 4/30</div>
+          <div class="mock-card-game">
+            <div style="font-size:8px;color:#c8ff00;font-weight:800;letter-spacing:1px;margin-bottom:8px;">⚡️ UDFORDRING</div>
+            <div class="mock-card-text">Mikkel skal lave en hønselyd. Gør han det ikke, drikker han 3 slurke.</div>
+          </div>
+          <div class="mock-player-row">
+            <div class="mock-avatar">M</div>
+            <div class="mock-avatar" style="opacity:0.4;">L</div>
+            <div class="mock-avatar" style="opacity:0.4;">S</div>
+          </div>
+          <div class="mock-btn">Næste kort →</div>
+        </div>
+      </div>
+
+      <!-- Tilbøjelig -->
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="mock-status"><span>9:41</span><span>●●●</span></div>
+          <div style="font-size:10px;font-weight:800;color:#00e5ff;margin-bottom:10px;">👉 TILBØJELIG</div>
+          <div class="mock-card" style="border-color:rgba(0,229,255,0.3);">
+            <div class="mock-card-text" style="font-size:10px;color:#fff;line-height:1.4;">Hvem er mest tilbøjelig til at danse på bordet?</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+            <div style="background:#1a1a1a;border:1px solid rgba(0,229,255,0.4);border-radius:8px;padding:8px;display:flex;justify-content:space-between;align-items:center;">
+              <div style="font-size:10px;color:#fff;font-weight:700;">Mikkel</div>
+              <div style="font-size:10px;color:#00e5ff;font-weight:900;">3 👈</div>
+            </div>
+            <div style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:8px;display:flex;justify-content:space-between;">
+              <div style="font-size:10px;color:#aaa;">Lars</div>
+              <div style="font-size:10px;color:#555;">1</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section>
+    <span class="section-badge">HVEM STÅR BAG?</span>
+    <h2 class="section-title">Historien bag HOSTED</h2>
+    <p class="section-sub">
+      HOSTED er ikke lavet af et stort firma. Det startede med én frustration og én idé.
+    </p>
+
+    <div class="about-card">
+      <div class="about-avatar">👩‍💻</div>
+      <div>
+        <div class="about-name">Ingrid Klein</div>
+        <div class="about-role">Grundlægger & Developer</div>
+        <div class="about-text">
+          Jeg var træt af at det altid var en ny app, et nyt abonnement man altid glemmer at
+          afmelde — og alligevel endte alle med at sidde med hver sin telefon og spille hvert
+          sit spil. Ingen fælles oplevelse.
+          <br><br>
+          Så jeg byggede HOSTED. Én app, én kode, alle samlet. Det skal kunne bruges til alt
+          — fra den store fredagsfest til den rolige familieaften med samtalekort. Og du
+          bestemmer selv om der er alkohol i glasset. Man er med uanset hvad.
+        </div>
+        <a href="mailto:ingridklein2003@gmail.com" style="display:inline-block;margin-top:16px;font-size:14px;font-weight:700;color:var(--lime);text-decoration:none;">
+          Skriv til mig → ingridklein2003@gmail.com
+        </a>
+      </div>
+    </div>
+
+    <div class="about-card" style="margin-top:14px;">
+      <div class="about-avatar" style="background: linear-gradient(135deg, #00e5ff, #7b61ff);">🤝</div>
+      <div>
+        <div class="about-name">Mikkel</div>
+        <div class="about-role">Medstifter & Forretning</div>
+        <div class="about-text">
+          Med sin erfaring og forretningsmæssige viden er Mikkel kommet med på rejsen —
+          og bidrager til at tage HOSTED fra idé til noget der reelt når ud til folk.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- BOTTOM CTA -->
+  <section style="text-align:center; padding: 80px 24px 40px;">
+    <h2 class="section-title">Klar til at prøve det?</h2>
+    <p class="section-sub" style="margin-bottom:32px;">
+      Enten har du allerede en festkode fra en ven — eller du kan tilmelde dig nu og
+      vente til appen er klar for alle.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/" style="background:var(--lime);color:#0d0d0d;text-decoration:none;
+        font-size:16px;font-weight:800;padding:18px 32px;border-radius:50px;display:inline-block;">
+        Join en fest med kode →
+      </a>
+      <a href="#" onclick="document.querySelector('.waitlist-input').focus();window.scrollTo({top:0,behavior:'smooth'});return false;"
+        style="background:#1a1a1a;color:#fff;text-decoration:none;border:1px solid #333;
+        font-size:16px;font-weight:800;padding:18px 32px;border-radius:50px;display:inline-block;">
+        Tilmeld venteliste
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">HOSTED</div>
+    <p style="margin-bottom:8px;">Bygget med ❤️</p>
+    <p>
+      <a href="/">Tilmeld fest</a> ·
+      <a href="mailto:ingridklein2003@gmail.com" style="color:var(--sub);">Kontakt</a>
+    </p>
+    <p style="margin-top:16px; color:#222;">© 2025 HOSTED · Beta version</p>
+  </footer>
+
+  <script>
+    const SUPABASE_URL = 'https://mfebfftytmjhextklsgj.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8';
+
+    async function submitHeroWaitlist() {
+      const input = document.getElementById('hero-email');
+      const btn = document.getElementById('hero-btn');
+      const success = document.getElementById('hero-success');
+      const row = document.getElementById('hero-waitlist-row');
+      const email = input.value.trim();
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => input.style.borderColor = '', 1500);
+        return;
+      }
+      btn.disabled = true; btn.textContent = '…';
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email, source: 'landing' })
+        });
+      } catch(e) {}
+      row.style.display = 'none';
+      success.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>
