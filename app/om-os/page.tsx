@@ -10,10 +10,10 @@ export default function OmOs() {
   return (
     <div style={{ background: "var(--bg)", color: "var(--text)", minHeight: "100vh" }}>
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 32px", borderBottom: "1px solid var(--border)" }}>
-        <Link href="/" style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", textDecoration: "none" }}>HOSTED</Link>
+        <Link href="/" style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, background: "linear-gradient(135deg, #C8FF00, #a0cc00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", textDecoration: "none" }}>HOSTED</Link>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <Link href="/om-os" style={{ color: "white", textDecoration: "none", fontSize: 15, fontWeight: 600 }}>Om os</Link>
-          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "8px 20px", borderRadius: 20, textDecoration: "none", fontSize: 15, fontWeight: 600 }}>Tilmeld dig</Link>
+          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#0a0a0a", padding: "8px 20px", borderRadius: 20, textDecoration: "none", fontSize: 15, fontWeight: 600 }}>Tilmeld dig</Link>
         </div>
       </nav>
 
@@ -45,9 +45,9 @@ export default function OmOs() {
               <div style={{ fontSize: 48, marginBottom: 16 }}>{person.emoji}</div>
               <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
                 <h3 style={{ fontSize: 20, fontWeight: 700 }}>{person.name}</h3>
-                <span style={{ background: "rgba(255,59,92,0.15)", border: "1px solid rgba(255,59,92,0.3)", color: "#ff3b5c", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, letterSpacing: 0.5 }}>{person.badge}</span>
+                <span style={{ background: "rgba(200,255,0,0.15)", border: "1px solid rgba(200,255,0,0.3)", color: "#C8FF00", fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, letterSpacing: 0.5 }}>{person.badge}</span>
               </div>
-              <p style={{ color: "#ff3b5c", fontSize: 13, fontWeight: 600, marginBottom: 14, textTransform: "uppercase", letterSpacing: 0.5 }}>{person.role}</p>
+              <p style={{ color: "#C8FF00", fontSize: 13, fontWeight: 600, marginBottom: 14, textTransform: "uppercase", letterSpacing: 0.5 }}>{person.role}</p>
               <p style={{ color: "var(--muted)", fontSize: 15, lineHeight: 1.6 }}>{person.desc}</p>
             </div>
           ))}
@@ -67,7 +67,7 @@ export default function OmOs() {
         </div>
 
         <div style={{ marginTop: 60, textAlign: "center" }}>
-          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "16px 36px", borderRadius: 28, textDecoration: "none", fontSize: 17, fontWeight: 700, display: "inline-block" }}>
+          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#0a0a0a", padding: "16px 36px", borderRadius: 28, textDecoration: "none", fontSize: 17, fontWeight: 700, display: "inline-block" }}>
             Kom på ventelisten →
           </Link>
         </div>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<title>HOSTED — Instagram Stories</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #111; display: flex; flex-direction: column; align-items: center; gap: 40px; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
+  .label { color: #666; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; text-align: center; }
+  .story {
+    width: 390px;
+    height: 693px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    flex-shrink: 0;
+  }
+
+  /* ── STORY 1 ── */
+  .s1 { background: #0a0a0a; }
+  .s1 .bg-glow {
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 500px;
+    background: radial-gradient(ellipse, rgba(200,255,0,0.35) 0%, transparent 65%);
+  }
+  .s1 .emoji-bg {
+    position: absolute; bottom: -20px; right: -30px;
+    font-size: 220px; opacity: 0.07; transform: rotate(-15deg);
+    filter: blur(2px);
+  }
+  .s1 .content {
+    position: relative; z-index: 2;
+    display: flex; flex-direction: column; justify-content: center;
+    height: 100%; padding: 48px 36px;
+  }
+  .s1 .tag {
+    display: inline-block;
+    background: rgba(200,255,0,0.15); border: 1px solid rgba(200,255,0,0.4);
+    color: #C8FF00; font-size: 12px; font-weight: 700; letter-spacing: 1px;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 28px;
+    text-transform: uppercase;
+  }
+  .s1 h1 {
+    font-size: 56px; font-weight: 800; letter-spacing: -2px; line-height: 1.0;
+    color: white; margin-bottom: 20px;
+  }
+  .s1 h1 span {
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .s1 .sub { color: rgba(255,255,255,0.55); font-size: 17px; line-height: 1.6; }
+  .s1 .logo {
+    position: absolute; bottom: 48px; left: 36px;
+    font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ── STORY 2 ── */
+  .s2 { background: #0a0a0a; }
+  .s2 .top-bar {
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #C8FF00, #a0cc00);
+  }
+  .s2 .content {
+    position: relative; z-index: 2;
+    padding: 48px 32px;
+    display: flex; flex-direction: column; height: 100%;
+  }
+  .s2 .headline {
+    color: white; font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    line-height: 1.1; margin-bottom: 10px;
+  }
+  .s2 .headline span {
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .s2 .sub { color: rgba(255,255,255,0.45); font-size: 14px; margin-bottom: 32px; }
+  .s2 .cards { display: flex; flex-direction: column; gap: 12px; flex: 1; }
+  .s2 .card {
+    background: #141414; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 18px; padding: 18px 20px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .s2 .card .icon { font-size: 30px; flex-shrink: 0; }
+  .s2 .card .text h3 { color: white; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .s2 .card .text p { color: rgba(255,255,255,0.45); font-size: 13px; line-height: 1.4; }
+  .s2 .logo {
+    font-size: 16px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-top: 20px;
+  }
+
+  /* ── STORY 3 ── */
+  .s3 { background: #0a0a0a; }
+  .s3 .glow {
+    position: absolute; bottom: -80px; right: -80px;
+    width: 350px; height: 350px;
+    background: radial-gradient(ellipse, rgba(48,209,88,0.2) 0%, transparent 70%);
+  }
+  .s3 .content {
+    position: relative; z-index: 2;
+    padding: 48px 32px; height: 100%;
+    display: flex; flex-direction: column;
+  }
+  .s3 .big-emoji { font-size: 80px; margin-bottom: 24px; }
+  .s3 .tag {
+    display: inline-block;
+    background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.3);
+    color: #30d158; font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    padding: 4px 12px; border-radius: 20px; margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  .s3 h2 { color: white; font-size: 40px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.05; margin-bottom: 16px; }
+  .s3 p { color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.65; margin-bottom: 32px; }
+  .s3 .steps { display: flex; flex-direction: column; gap: 14px; }
+  .s3 .step { display: flex; align-items: center; gap: 14px; }
+  .s3 .step .dot {
+    width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  .s3 .step .dot.r { background: rgba(200,255,0,0.15); color: #C8FF00; }
+  .s3 .step .dot.o { background: rgba(160,204,0,0.15); color: #a0cc00; }
+  .s3 .step .dot.g { background: rgba(48,209,88,0.15); color: #30d158; }
+  .s3 .step span { color: rgba(255,255,255,0.7); font-size: 14px; font-weight: 500; }
+  .s3 .logo {
+    margin-top: auto; font-size: 16px; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  /* ── STORY 4 — CTA ── */
+  .s4 {
+    background: linear-gradient(160deg, #1a0a0e 0%, #0a0a0a 50%, #0a0f0a 100%);
+  }
+  .s4 .glow1 {
+    position: absolute; top: -60px; left: -80px;
+    width: 340px; height: 340px;
+    background: radial-gradient(ellipse, rgba(200,255,0,0.3) 0%, transparent 65%);
+  }
+  .s4 .glow2 {
+    position: absolute; bottom: -80px; right: -60px;
+    width: 280px; height: 280px;
+    background: radial-gradient(ellipse, rgba(160,204,0,0.2) 0%, transparent 65%);
+  }
+  .s4 .content {
+    position: relative; z-index: 2;
+    height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 48px 36px; text-align: center;
+  }
+  .s4 .big-logo {
+    font-size: 36px; font-weight: 800; letter-spacing: -1px;
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 24px;
+  }
+  .s4 h2 {
+    color: white; font-size: 42px; font-weight: 800;
+    letter-spacing: -1.5px; line-height: 1.05; margin-bottom: 16px;
+  }
+  .s4 p {
+    color: rgba(255,255,255,0.5); font-size: 16px; line-height: 1.6; margin-bottom: 40px;
+  }
+  .s4 .cta {
+    background: linear-gradient(135deg, #C8FF00, #a0cc00);
+    color: black; font-size: 18px; font-weight: 800;
+    padding: 18px 44px; border-radius: 32px;
+    box-shadow: 0 12px 40px rgba(200,255,0,0.4);
+    margin-bottom: 16px; display: inline-block;
+    letter-spacing: -0.3px;
+  }
+  .s4 .url {
+    color: rgba(255,255,255,0.3); font-size: 13px; letter-spacing: 0.5px;
+  }
+  .s4 .dots {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 6px;
+  }
+  .s4 .dots span {
+    width: 6px; height: 6px; border-radius: 3px; background: rgba(255,255,255,0.2);
+  }
+  .s4 .dots span.active { width: 24px; background: #C8FF00; }
+</style>
+</head>
+<body>
+
+<div>
+  <div class="label">Story 1 / 4 — Hook</div>
+  <div class="story s1">
+    <div class="bg-glow"></div>
+    <div class="emoji-bg">🎉</div>
+    <div class="content">
+      <div class="tag">🎉 Kommer snart</div>
+      <h1>Fest-appen<br><span>der samler<br>alle</span></h1>
+      <p class="sub">Kortspil, Impostor, fotoalbum og meget mere — alt på ét link.</p>
+    </div>
+    <div class="logo">HOSTED</div>
+  </div>
+</div>
+
+<div>
+  <div class="label">Story 2 / 4 — Features</div>
+  <div class="story s2">
+    <div class="top-bar"></div>
+    <div class="content">
+      <div class="headline">Alt hvad en<br>fest <span>behøver</span></div>
+      <div class="sub">Ingen download for gæster — bare send et link.</div>
+      <div class="cards">
+        <div class="card">
+          <div class="icon">🃏</div>
+          <div class="text">
+            <h3>Kortspil & pakker</h3>
+            <p>Drik-spil, samtalekort, catch-up — vælg hvad der passer.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="icon">🕵️</div>
+          <div class="text">
+            <h3>Impostor</h3>
+            <p>Find spionen i gruppen. Perfekt til store selskaber.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="icon">📸</div>
+          <div class="text">
+            <h3>Fotoalbum</h3>
+            <p>Alle uploader billeder — samlet ét sted efter festen.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="icon">🏆</div>
+          <div class="text">
+            <h3>Turnering</h3>
+            <p>Live bracket-turnering alle kan følge med i.</p>
+          </div>
+        </div>
+      </div>
+      <div class="logo">HOSTED</div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="label">Story 3 / 4 — Ikke-drikkere</div>
+  <div class="story s3">
+    <div class="glow"></div>
+    <div class="content">
+      <div class="big-emoji">🚫🍺</div>
+      <div class="tag">Inkluderende</div>
+      <h2>Drikker du<br>ikke?<br>Du er stadig med.</h2>
+      <p>Hvert spil har en individuel drikke-toggle per person.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="dot r">1</div>
+          <span>Vælg om du drikker — eller ej</span>
+        </div>
+        <div class="step">
+          <div class="dot o">2</div>
+          <span>Du modtager ingen slurke</span>
+        </div>
+        <div class="step">
+          <div class="dot g">3</div>
+          <span>Men du kan stadig give dem til andre</span>
+        </div>
+      </div>
+      <div class="logo">HOSTED</div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="label">Story 4 / 4 — CTA</div>
+  <div class="story s4">
+    <div class="glow1"></div>
+    <div class="glow2"></div>
+    <div class="content">
+      <div class="big-logo">HOSTED</div>
+      <h2>Klar til en<br>bedre fest?</h2>
+      <p>Skriv dig på ventelisten og vær den første til at få adgang.</p>
+      <div class="cta">Kom på ventelisten →</div>
+      <div class="url">hosted-web-five.vercel.app</div>
+    </div>
+    <div class="dots">
+      <span></span><span></span><span></span><span class="active"></span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

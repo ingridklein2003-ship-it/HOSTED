@@ -56,7 +56,7 @@ function JoinFlow({ code }: { code: string }) {
   if (screen === "error") return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16, padding: 24 }}>
       <div style={{ fontSize: 48 }}>😬</div>
-      <p style={{ color: "#ff3b5c", fontWeight: 600 }}>{error}</p>
+      <p style={{ color: "#C8FF00", fontWeight: 600 }}>{error}</p>
       <Link href="/" style={{ color: "var(--muted)", fontSize: 14 }}>Tilbage til forsiden</Link>
     </div>
   );
@@ -72,7 +72,7 @@ function JoinFlow({ code }: { code: string }) {
   return (
     <div style={{ maxWidth: 420, margin: "0 auto", padding: "60px 20px" }}>
       <div style={{ marginBottom: 32, textAlign: "center" }}>
-        <div style={{ fontWeight: 800, fontSize: 22, background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 24 }}>HOSTED</div>
+        <div style={{ fontWeight: 800, fontSize: 22, background: "linear-gradient(135deg, #C8FF00, #a0cc00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", marginBottom: 24 }}>HOSTED</div>
       </div>
       {party && (
         <>
@@ -80,14 +80,14 @@ function JoinFlow({ code }: { code: string }) {
             <div style={{ fontSize: 52, marginBottom: 12 }}>{party.emoji || "🎊"}</div>
             <h2 style={{ fontSize: 26, fontWeight: 700, marginBottom: 6 }}>{party.name}</h2>
             <p style={{ color: "var(--muted)", fontSize: 14 }}>Hosted af {party.host_name}</p>
-            <div style={{ display: "inline-block", background: "rgba(255,59,92,0.15)", border: "1px solid rgba(255,59,92,0.3)", color: "#ff3b5c", fontSize: 13, fontWeight: 600, padding: "4px 12px", borderRadius: 20, marginTop: 12, letterSpacing: 2 }}>{party.code}</div>
+            <div style={{ display: "inline-block", background: "rgba(200,255,0,0.15)", border: "1px solid rgba(200,255,0,0.3)", color: "#C8FF00", fontSize: 13, fontWeight: 600, padding: "4px 12px", borderRadius: 20, marginTop: 12, letterSpacing: 2 }}>{party.code}</div>
           </div>
           <p style={{ fontWeight: 700, marginBottom: 12 }}>Hvad skal du hedde?</p>
           <input type="text" placeholder="Ingrid" value={name} onChange={(e) => setName(e.target.value)}
             style={{ width: "100%", background: "var(--card)", border: "1px solid var(--border)", borderRadius: 14, padding: "14px 18px", fontSize: 17, color: "var(--text)", outline: "none", marginBottom: 16 }} />
-          {error && <p style={{ color: "#ff3b5c", fontSize: 14, marginBottom: 12 }}>{error}</p>}
+          {error && <p style={{ color: "#C8FF00", fontSize: 14, marginBottom: 12 }}>{error}</p>}
           <button onClick={joinParty} disabled={joining || !name.trim()} style={{
-            width: "100%", background: !name.trim() ? "var(--border)" : "linear-gradient(135deg, #ff3b5c, #ff6b35)",
+            width: "100%", background: !name.trim() ? "var(--border)" : "linear-gradient(135deg, #C8FF00, #a0cc00)",
             color: "white", padding: 16, borderRadius: 16, border: "none", fontSize: 17, fontWeight: 700, cursor: "pointer"
           }}>
             {joining ? "Joiner..." : "Join festen 🎉"}
@@ -100,12 +100,12 @@ function JoinFlow({ code }: { code: string }) {
 
 const PACKAGES = [
   { emoji: "💍", name: "Bryllup", desc: "Hyggelige samtale- og legkort til bryllupsreception, jungfretur og brudepar-aftener.", gradient: "linear-gradient(135deg, #c9a96e, #f5e6c8)", color: "#c9a96e", tag: "Familie & par" },
-  { emoji: "🎓", name: "Studenterbolle", desc: "Fejr dimissionen med boldene, studentervogn-stemningen og hele klassen samlet.", gradient: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "#ff3b5c", tag: "Klassiker" },
+  { emoji: "🎓", name: "Studenterbolle", desc: "Fejr dimissionen med boldene, studentervogn-stemningen og hele klassen samlet.", gradient: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#C8FF00", tag: "Klassiker" },
   { emoji: "🌿", name: "Havefest", desc: "Perfekt til solskinsdage i haven. Kortene passer til alle aldre og stemninger.", gradient: "linear-gradient(135deg, #30d158, #34c759)", color: "#30d158", tag: "Sommer" },
-  { emoji: "🎄", name: "Julefest", desc: "Julegækkeri, hvem kender hvem-spørgsmål og kortspil til hele familien.", gradient: "linear-gradient(135deg, #ff6b35, #ff3b5c)", color: "#ff6b35", tag: "Højtid" },
+  { emoji: "🎄", name: "Julefest", desc: "Julegækkeri, hvem kender hvem-spørgsmål og kortspil til hele familien.", gradient: "linear-gradient(135deg, #a0cc00, #C8FF00)", color: "#a0cc00", tag: "Højtid" },
   { emoji: "🏢", name: "Firmafest", desc: "Hold stemningen professionel men sjov. Icebreakers og teamspil til kollegaer.", gradient: "linear-gradient(135deg, #007aff, #5856d6)", color: "#007aff", tag: "Business" },
   { emoji: "🎭", name: "Temafest", desc: "Kortpakker der passer til dit tema — fra 80'erne til galaksen.", gradient: "linear-gradient(135deg, #bf5af2, #ff375f)", color: "#bf5af2", tag: "Kreativ" },
-  { emoji: "🏡", name: "Familieaften", desc: "Samtale- og catch-up kort til hyggeaften med familien. Ingen druk, bare fællesskab.", gradient: "linear-gradient(135deg, #ff9f0a, #ff6b35)", color: "#ff9f0a", tag: "Alkoholfri" },
+  { emoji: "🏡", name: "Familieaften", desc: "Samtale- og catch-up kort til hyggeaften med familien. Ingen druk, bare fællesskab.", gradient: "linear-gradient(135deg, #ff9f0a, #a0cc00)", color: "#ff9f0a", tag: "Alkoholfri" },
   { emoji: "🍺", name: "Fredagsbar", desc: "Klassiske drukspil og udfordringer der skruer festen op på fredagsbar.", gradient: "linear-gradient(135deg, #ffd60a, #ff9f0a)", color: "#ffd60a", tag: "Fest" },
 ];
 
@@ -121,29 +121,29 @@ function HomeContent() {
     <div style={{ background: "var(--bg)", color: "var(--text)", overflowX: "hidden" }}>
       {/* Nav */}
       <nav style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "20px 32px", borderBottom: "1px solid var(--border)", position: "sticky", top: 0, background: "rgba(10,10,10,0.92)", backdropFilter: "blur(16px)", zIndex: 100 }}>
-        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>HOSTED</div>
+        <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, background: "linear-gradient(135deg, #C8FF00, #a0cc00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>HOSTED</div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <Link href="/om-os" style={{ color: "var(--muted)", textDecoration: "none", fontSize: 15 }}>Om os</Link>
-          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "8px 20px", borderRadius: 20, textDecoration: "none", fontSize: 15, fontWeight: 600 }}>Tilmeld dig</Link>
+          <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#0a0a0a", padding: "8px 20px", borderRadius: 20, textDecoration: "none", fontSize: 15, fontWeight: 600 }}>Tilmeld dig</Link>
         </div>
       </nav>
 
       {/* Hero */}
       <section style={{ textAlign: "center", padding: "110px 24px 80px", maxWidth: 740, margin: "0 auto", position: "relative" }}>
-        <div style={{ position: "absolute", top: 40, left: "50%", transform: "translateX(-50%)", width: 600, height: 600, background: "radial-gradient(ellipse, rgba(255,59,92,0.15) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
+        <div style={{ position: "absolute", top: 40, left: "50%", transform: "translateX(-50%)", width: 600, height: 600, background: "radial-gradient(ellipse, rgba(200,255,0,0.15) 0%, transparent 70%)", pointerEvents: "none", zIndex: 0 }} />
         <div style={{ position: "relative", zIndex: 1 }}>
-          <div style={{ display: "inline-block", background: "rgba(255,59,92,0.1)", border: "1px solid rgba(255,59,92,0.3)", borderRadius: 20, padding: "6px 16px", fontSize: 13, color: "#ff3b5c", fontWeight: 600, marginBottom: 28, letterSpacing: 0.5 }}>
+          <div style={{ display: "inline-block", background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", borderRadius: 20, padding: "6px 16px", fontSize: 13, color: "#C8FF00", fontWeight: 600, marginBottom: 28, letterSpacing: 0.5 }}>
             🎉 Kommer snart til App Store
           </div>
           <h1 style={{ fontSize: "clamp(44px, 9vw, 80px)", fontWeight: 800, letterSpacing: -2.5, lineHeight: 1.02, marginBottom: 24 }}>
             Fest-appen<br />
-            <span style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>der samler alle</span>
+            <span style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>der samler alle</span>
           </h1>
           <p style={{ fontSize: 20, color: "var(--muted)", lineHeight: 1.65, maxWidth: 520, margin: "0 auto 52px" }}>
             Fra bryllup til fredagsbar — opret din fest, invitér gæster med ét link og spil kortspil, Impostor og meget mere. Ingen download for gæster.
           </p>
           <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "16px 36px", borderRadius: 28, textDecoration: "none", fontSize: 17, fontWeight: 700, boxShadow: "0 8px 32px rgba(255,59,92,0.35)" }}>Kom på ventelisten →</Link>
+            <Link href="/venteliste" style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#0a0a0a", padding: "16px 36px", borderRadius: 28, textDecoration: "none", fontSize: 17, fontWeight: 700, boxShadow: "0 8px 32px rgba(200,255,0,0.35)" }}>Kom på ventelisten →</Link>
             <Link href="/om-os" style={{ border: "1px solid var(--border)", color: "var(--text)", padding: "16px 36px", borderRadius: 28, textDecoration: "none", fontSize: 17, fontWeight: 600 }}>Læs mere</Link>
           </div>
         </div>
@@ -153,7 +153,7 @@ function HomeContent() {
       <section style={{ padding: "80px 0 80px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ textAlign: "center", marginBottom: 16 }}>
-            <span style={{ background: "rgba(255,107,53,0.1)", border: "1px solid rgba(255,107,53,0.3)", borderRadius: 16, padding: "5px 14px", fontSize: 12, color: "#ff6b35", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Fest-pakker</span>
+            <span style={{ background: "rgba(160,204,0,0.1)", border: "1px solid rgba(160,204,0,0.3)", borderRadius: 16, padding: "5px 14px", fontSize: 12, color: "#a0cc00", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" }}>Fest-pakker</span>
           </div>
           <h2 style={{ textAlign: "center", fontSize: "clamp(28px, 5vw, 44px)", fontWeight: 800, letterSpacing: -1.2, marginBottom: 14 }}>En pakke til enhver fest</h2>
           <p style={{ textAlign: "center", color: "var(--muted)", fontSize: 18, marginBottom: 56, maxWidth: 500, margin: "0 auto 56px" }}>
@@ -177,9 +177,9 @@ function HomeContent() {
 
       {/* Ikke kun druk */}
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 24px 80px" }}>
-        <div style={{ background: "linear-gradient(135deg, rgba(255,59,92,0.08), rgba(255,107,53,0.05))", border: "1px solid rgba(255,59,92,0.15)", borderRadius: 32, padding: "56px 48px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
+        <div style={{ background: "linear-gradient(135deg, rgba(200,255,0,0.08), rgba(160,204,0,0.05))", border: "1px solid rgba(200,255,0,0.15)", borderRadius: 32, padding: "56px 48px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 48, alignItems: "center" }}>
           <div>
-            <span style={{ background: "rgba(255,59,92,0.1)", border: "1px solid rgba(255,59,92,0.3)", borderRadius: 16, padding: "5px 14px", fontSize: 12, color: "#ff3b5c", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" as const, display: "inline-block", marginBottom: 20 }}>Vigtigt at vide</span>
+            <span style={{ background: "rgba(200,255,0,0.1)", border: "1px solid rgba(200,255,0,0.3)", borderRadius: 16, padding: "5px 14px", fontSize: 12, color: "#C8FF00", fontWeight: 700, letterSpacing: 1, textTransform: "uppercase" as const, display: "inline-block", marginBottom: 20 }}>Vigtigt at vide</span>
             <h2 style={{ fontSize: "clamp(26px, 4vw, 40px)", fontWeight: 800, letterSpacing: -1, lineHeight: 1.1, marginBottom: 20 }}>HOSTED er ikke<br />kun et drukspil</h2>
             <p style={{ color: "var(--muted)", fontSize: 17, lineHeight: 1.7 }}>
               Vi har pakker til alle — fra vilde fredagsbarer til rolige familieaftener. Samtale-kort, catch-up spørgsmål og aktiviteter der fungerer uden en eneste slurk.
@@ -216,8 +216,8 @@ function HomeContent() {
           </div>
           <div style={{ display: "flex", flexDirection: "column" as const, gap: 0 }}>
             {[
-              { step: "1", title: "Vælg dine spillere", desc: "Tilføj alle til spillet fra din telefon.", color: "#ff3b5c" },
-              { step: "2", title: "Sæt drikke-toggle", desc: "Hver person vælger selv om de drikker. Ingen pres.", color: "#ff6b35" },
+              { step: "1", title: "Vælg dine spillere", desc: "Tilføj alle til spillet fra din telefon.", color: "#C8FF00" },
+              { step: "2", title: "Sæt drikke-toggle", desc: "Hver person vælger selv om de drikker. Ingen pres.", color: "#a0cc00" },
               { step: "3", title: "Spil som normalt", desc: "Kortene giver kun slurke til dem der vil have dem — men ikke-drikkere kan stadig give dem til andre.", color: "#30d158" },
             ].map((step, i) => (
               <div key={step.step} style={{ display: "flex", gap: 20, alignItems: "flex-start", padding: "24px 0", borderBottom: i < 2 ? "1px solid var(--border)" : "none" }}>
@@ -281,7 +281,7 @@ function HomeContent() {
           }} style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
             <input type="email" required placeholder="din@email.dk" value={email} onChange={(e) => setEmail(e.target.value)}
               style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 14, padding: "14px 20px", fontSize: 16, color: "var(--text)", outline: "none", flex: 1, minWidth: 220 }} />
-            <button type="submit" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "14px 28px", borderRadius: 14, border: "none", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Tilmeld →</button>
+            <button type="submit" style={{ background: "linear-gradient(135deg, #C8FF00, #a0cc00)", color: "#0a0a0a", padding: "14px 28px", borderRadius: 14, border: "none", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Tilmeld →</button>
           </form>
         )}
         <p style={{ color: "var(--muted)", fontSize: 13, marginTop: 20 }}>Ingen spam. Kun én mail når vi er klar.</p>
@@ -289,7 +289,7 @@ function HomeContent() {
 
       {/* Footer */}
       <footer style={{ borderTop: "1px solid var(--border)", padding: "32px 24px", textAlign: "center", color: "var(--muted)", fontSize: 14 }}>
-        <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 10, background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", display: "inline-block" }}>HOSTED</div>
+        <div style={{ fontWeight: 800, fontSize: 20, marginBottom: 10, background: "linear-gradient(135deg, #C8FF00, #a0cc00)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", display: "inline-block" }}>HOSTED</div>
         <p>Et produkt af KleinDesign · <Link href="/om-os" style={{ color: "var(--muted)" }}>Om os</Link> · <a href="mailto:hosted.mobileapp@gmail.com" style={{ color: "var(--muted)" }}>Kontakt</a></p>
       </footer>
     </div>

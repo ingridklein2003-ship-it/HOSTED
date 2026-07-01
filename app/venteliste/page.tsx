@@ -29,7 +29,7 @@ export default function Venteliste() {
       }}>
         <Link href="/" style={{
           fontSize: 22, fontWeight: 800, letterSpacing: -0.5,
-          background: "linear-gradient(135deg, #ff3b5c, #ff6b35)",
+          background: "linear-gradient(135deg, #C8FF00, #a0cc00)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
           textDecoration: "none"
         }}>HOSTED</Link>
@@ -71,7 +71,7 @@ export default function Venteliste() {
               }}
             />
             <button type="submit" style={{
-              background: "linear-gradient(135deg, #ff3b5c, #ff6b35)",
+              background: "linear-gradient(135deg, #C8FF00, #a0cc00)",
               color: "white", padding: "16px", borderRadius: 16,
               border: "none", fontSize: 17, fontWeight: 700, cursor: "pointer"
             }}>
