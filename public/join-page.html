@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>HOSTED — Join fest</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+    }
+
+    .glow-top {
+      position: fixed;
+      top: -120px; left: 50%;
+      transform: translateX(-50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(200,255,0,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .screen { max-width: 420px; width: 100%; display: none; }
+    .screen.active { display: block; }
+
+    /* ── SHARED ── */
+    .logo-row { text-align: center; margin-bottom: 28px; }
+    .badge {
+      display: inline-block;
+      background: #c8ff00; color: #0d0d0d;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+    }
+    h1 {
+      font-size: 48px; font-weight: 900; letter-spacing: 8px;
+      color: #fff; margin-bottom: 4px;
+    }
+    .tagline { color: #555; font-size: 13px; letter-spacing: 1px; }
+
+    .card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-label {
+      color: #555; font-size: 11px; font-weight: 700;
+      letter-spacing: 2px; margin-bottom: 8px;
+    }
+
+    /* ── LOADING ── */
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #222;
+      border-top-color: #c8ff00;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 40px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── JOIN FORM ── */
+    .party-name-display {
+      font-size: 22px; font-weight: 900; color: #c8ff00;
+      margin-bottom: 4px;
+    }
+    .party-code-display {
+      font-size: 13px; color: #555; letter-spacing: 2px;
+    }
+
+    .input-label {
+      font-size: 12px; font-weight: 700; color: #555;
+      letter-spacing: 1px; margin-bottom: 8px;
+      display: block;
+    }
+    .name-input {
+      width: 100%;
+      background: #111; border: 1px solid #2a2a2a;
+      border-radius: 14px; color: #fff;
+      font-size: 17px; font-weight: 700;
+      padding: 16px 18px;
+      outline: none;
+      transition: border-color 0.2s;
+      -webkit-appearance: none;
+    }
+    .name-input:focus { border-color: #c8ff00; }
+    .name-input::placeholder { color: #333; }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .emoji-btn {
+      aspect-ratio: 1;
+      background: #111;
+      border: 2px solid #222;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.15s, transform 0.1s;
+      -webkit-appearance: none;
+    }
+    .emoji-btn:active { transform: scale(0.92); }
+    .emoji-btn.selected {
+      border-color: #c8ff00;
+      background: rgba(200,255,0,0.08);
+    }
+
+    .join-btn {
+      width: 100%;
+      background: #c8ff00; color: #0d0d0d;
+      border: none; border-radius: 50px;
+      font-size: 16px; font-weight: 800;
+      padding: 18px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s, transform 0.1s;
+      -webkit-appearance: none;
+    }
+    .join-btn:active { transform: scale(0.98); opacity: 0.85; }
+    .join-btn:disabled { opacity: 0.35; cursor: default; }
+
+    /* ── DASHBOARD ── */
+    .avatar-circle {
+      width: 72px; height: 72px;
+      background: #1a1a1a;
+      border: 2px solid #2a2a2a;
+      border-radius: 50%;
+      font-size: 36px;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 12px;
+    }
+    .welcome-name {
+      font-size: 22px; font-weight: 900; text-align: center;
+      margin-bottom: 4px;
+    }
+    .welcome-sub {
+      color: #555; font-size: 13px; text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .game-card {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 20px;
+      padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .game-card.active-game {
+      border-color: rgba(200,255,0,0.4);
+      background: linear-gradient(135deg, rgba(200,255,0,0.06), #161616);
+    }
+
+    .game-live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #c8ff00; color: #0d0d0d;
+      font-size: 11px; font-weight: 800; letter-spacing: 1px;
+      padding: 4px 12px; border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .live-dot {
+      width: 6px; height: 6px;
+      background: #0d0d0d; border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .game-name {
+      font-size: 20px; font-weight: 900; color: #fff;
+      margin-bottom: 4px;
+    }
+    .game-sub {
+      font-size: 13px; color: #555;
+    }
+
+    .tappable-card { cursor: pointer; }
+    .tappable-card:active { transform: scale(0.98); }
+    .no-game-icon { font-size: 32px; margin-bottom: 8px; }
+    .no-game-title { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .no-game-sub { font-size: 13px; color: #555; }
+
+    .guests-row {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 12px;
+    }
+    .guest-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: #111; border: 1px solid #222;
+      border-radius: 20px; padding: 6px 12px;
+      font-size: 13px; font-weight: 600; color: #ccc;
+    }
+    .guest-chip-avatar {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .download-hint {
+      background: #111; border: 1px solid #1e1e1e;
+      border-radius: 16px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px; text-decoration: none;
+    }
+    .download-hint-icon { font-size: 28px; flex-shrink: 0; }
+    .download-hint-text { flex: 1; }
+    .download-hint-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 2px; }
+    .download-hint-sub { font-size: 12px; color: #555; }
+    .download-hint-arrow { color: #444; font-size: 16px; }
+
+    /* ── WAITLIST ── */
+    .waitlist-card {
+      background: #161616;
+      border: 1px solid rgba(200,255,0,0.25);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .waitlist-title {
+      font-size: 16px; font-weight: 800; color: #fff;
+      margin-bottom: 6px;
+    }
+    .waitlist-sub {
+      font-size: 13px; color: #666;
+      margin-bottom: 16px; line-height: 1.5;
+    }
+    .waitlist-row {
+      display: flex; gap: 8px;
+    }
+    .waitlist-input {
+      flex: 1;
+      background: #111; border: 1px solid #2a2a2a;
+      border-radius: 12px; color: #fff;
+      font-size: 15px; padding: 14px 16px;
+      outline: none; -webkit-appearance: none;
+      transition: border-color 0.2s;
+    }
+    .waitlist-input:focus { border-color: #c8ff00; }
+    .waitlist-input::placeholder { color: #333; }
+    .waitlist-btn {
+      background: #c8ff00; color: #0d0d0d;
+      border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 800;
+      padding: 14px 18px; cursor: pointer;
+      white-space: nowrap; -webkit-appearance: none;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+    .waitlist-btn:disabled { opacity: 0.4; cursor: default; }
+    .waitlist-success {
+      display: none;
+      align-items: center; gap: 10px;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.3);
+      border-radius: 12px; padding: 14px 16px;
+      font-size: 14px; font-weight: 700; color: #c8ff00;
+    }
+
+    /* ── ERROR ── */
+    .error-icon { font-size: 48px; text-align: center; margin: 20px 0 12px; }
+    .error-title { font-size: 20px; font-weight: 900; text-align: center; margin-bottom: 8px; }
+    .error-sub { font-size: 14px; color: #555; text-align: center; line-height: 1.5; }
+
+    /* ── LANG TOGGLE ── */
+    .lang-toggle {
+      position: fixed;
+      top: 16px; right: 16px;
+      display: flex; gap: 6px;
+      z-index: 100;
+    }
+    .lang-btn {
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      font-size: 12px; font-weight: 700; letter-spacing: 1px;
+      padding: 6px 12px; border-radius: 20px;
+      cursor: pointer; -webkit-appearance: none;
+      transition: all 0.15s;
+    }
+    .lang-btn.active { background: #c8ff00; border-color: #c8ff00; color: #0d0d0d; }
+  </style>
+</head>
+<body>
+  <div class="glow-top"></div>
+
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnDA" onclick="setLang('da')">DA</button>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">EN</button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="screen active" id="screen-loading">
+    <div class="logo-row">
+      <div class="badge" id="load-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+    </div>
+    <div class="spinner"></div>
+  </div>
+
+  <!-- NO CODE — waitlist landing -->
+  <div class="screen" id="screen-nocode">
+    <div class="logo-row">
+      <div class="badge" id="nc-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+      <p class="tagline" id="nc-tagline">kortspil · fotoalbum · druk-tæller</p>
+    </div>
+
+    <div class="card" style="text-align:center; padding: 32px 24px;">
+      <div style="font-size:48px; margin-bottom:12px;">🎉</div>
+      <div style="font-size:20px; font-weight:900; margin-bottom:8px;" id="nc-coming-title">Appen er på vej</div>
+      <div style="font-size:14px; color:#555; line-height:1.6;" id="nc-coming-desc">
+        HOSTED er i beta. Skriv dig op og få besked<br>som en af de første når den er klar til alle.
+      </div>
+    </div>
+
+    <div class="waitlist-card" id="waitlist-nocode">
+      <div class="waitlist-title" id="nc-wl-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub" id="nc-wl-sub">Vi sender dig én mail. Intet spam.</div>
+      <div class="waitlist-row">
+        <input class="waitlist-input" id="email-nocode" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="btn-nocode" onclick="submitWaitlist('email-nocode','btn-nocode','success-nocode')">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="success-nocode">
+        <span>✓</span> Du er på listen — vi giver dig besked!
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label" id="nc-code-label">HAR DU EN FESTKODE?</div>
+      <div class="waitlist-row" style="margin-top:8px;">
+        <input
+          class="name-input"
+          id="manual-code-input"
+          type="text"
+          placeholder="ABC123"
+          maxlength="6"
+          autocomplete="off"
+          autocorrect="off"
+          autocapitalize="characters"
+          style="text-transform:uppercase;letter-spacing:4px;font-size:22px;font-weight:900;"
+          oninput="this.value=this.value.toUpperCase();updateManualJoinBtn()"
+        >
+        <button class="waitlist-btn" id="btn-manual-join" disabled onclick="joinWithManualCode()" style="padding:14px 22px;border-radius:12px;font-size:18px;">→</button>
+      </div>
+      <div style="color:#ff4444;font-size:13px;margin-top:8px;display:none;" id="manual-code-error">Festen blev ikke fundet — tjek koden</div>
+    </div>
+
+  </div>
+
+  <!-- EMAIL FIRST (with party code) -->
+  <div class="screen" id="screen-email-first">
+    <div class="logo-row">
+      <div class="badge" id="ef-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+      <p class="tagline" id="ef-tagline">kortspil · fotoalbum · druk-tæller</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label" id="ef-invited-label">DU ER INVITERET TIL</div>
+      <div class="party-name-display" id="ef-party-name">—</div>
+      <div class="party-code-display" id="ef-party-code">—</div>
+    </div>
+
+    <div class="waitlist-card">
+      <div class="waitlist-title" id="ef-wl-title">🔔 Få besked når appen lanceres</div>
+      <div class="waitlist-sub" id="ef-wl-sub">Én mail når HOSTED er klar til alle. Intet spam.</div>
+      <div class="waitlist-row" id="ef-email-row">
+        <input class="waitlist-input" id="email-ef" type="email" placeholder="din@email.dk" autocomplete="email">
+        <button class="waitlist-btn" id="btn-ef" onclick="submitWaitlistThenContinue()">Tilmeld</button>
+      </div>
+      <div class="waitlist-success" id="success-ef" style="margin-bottom:0;">
+        <span>✓</span> Du er på listen!
+      </div>
+    </div>
+
+    <button class="join-btn" id="ef-skip-btn" onclick="goToJoinForm()" style="background:#1a1a1a; color:#888; border:1px solid #2a2a2a;">
+      Spring over → Gå til festen
+    </button>
+  </div>
+
+  <!-- JOIN FORM -->
+  <div class="screen" id="screen-join">
+    <div class="logo-row">
+      <div class="badge" id="join-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+      <p class="tagline" id="join-tagline">kortspil · fotoalbum · druk-tæller</p>
+    </div>
+
+    <div class="card">
+      <div class="card-label" id="join-invited-label">DU ER INVITERET TIL</div>
+      <div class="party-name-display" id="join-party-name">—</div>
+      <div class="party-code-display" id="join-party-code">—</div>
+    </div>
+
+    <div class="card">
+      <label class="input-label" id="join-name-label">DIT NAVN</label>
+      <input
+        class="name-input"
+        id="name-input"
+        type="text"
+        placeholder="Hvad hedder du?"
+        maxlength="30"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="words"
+      >
+    </div>
+
+    <div class="card">
+      <label class="input-label" id="join-emoji-label">VÆLG DIN EMOJI</label>
+      <div class="emoji-grid" id="emoji-grid"></div>
+    </div>
+
+    <button class="join-btn" id="join-btn" disabled>Join festen</button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div class="screen" id="screen-dashboard">
+    <div class="logo-row">
+      <div class="badge" id="dash-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+    </div>
+
+    <div style="text-align:center; margin-bottom: 24px;">
+      <div class="avatar-circle" id="dash-avatar">🎉</div>
+      <div class="welcome-name" id="dash-name">Hej!</div>
+      <div class="welcome-sub" id="dash-party">Du er med i festen 🔥</div>
+    </div>
+
+    <!-- Active game -->
+    <div id="game-section" class="game-card" style="transition: all 0.3s;">
+      <div class="no-game-icon">🎮</div>
+      <div class="no-game-title" id="dash-no-game-title">Ingen spil i gang</div>
+      <div class="no-game-sub" id="dash-no-game-sub">Venter på værtens signal...</div>
+    </div>
+
+    <!-- Card view — prominent -->
+    <div id="card-view" style="display:none; margin-bottom:16px;">
+      <div id="card-box" style="background:#161616; border:2px solid rgba(200,255,0,0.5); border-radius:24px; padding:36px 28px; text-align:center; box-shadow: 0 0 40px rgba(200,255,0,0.15);">
+        <div id="card-label-el" style="font-size:11px;font-weight:700;letter-spacing:2px;color:#c8ff00;margin-bottom:24px;">🃏 AKTIVT KORT</div>
+        <div id="card-text" style="font-size:22px;font-weight:900;color:#fff;line-height:1.6;"></div>
+        <div id="card-update-text" style="margin-top:24px;font-size:12px;color:#555;letter-spacing:1px;">OPDATERES AUTOMATISK</div>
+      </div>
+    </div>
+
+    <!-- Voting view (Tilbøjelig) -->
+    <div id="voting-view" style="display:none; margin-bottom:16px;"></div>
+
+    <!-- Guests -->
+    <div class="card">
+      <div class="card-label" style="margin-bottom:12px;" id="dash-guests-label">GÆSTER</div>
+      <div class="guests-row" id="guests-row">
+        <div style="color:#444; font-size:13px;" id="dash-loading-guests">Henter gæster...</div>
+      </div>
+    </div>
+
+    <!-- Beta info -->
+    <div style="background:#111; border:1px solid #1e1e1e; border-radius:16px; padding:20px; margin-bottom:16px;">
+      <div style="font-size:13px; font-weight:800; color:#fff; margin-bottom:6px;" id="dash-beta-title">🚧 HOSTED er under udvikling</div>
+      <div style="font-size:13px; color:#555; line-height:1.6;" id="dash-beta-desc">
+        Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på.
+      </div>
+      <div style="display:flex; gap:12px; margin-top:12px; flex-wrap:wrap;">
+        <a href="/landing" style="font-size:13px; font-weight:700; color:#c8ff00; text-decoration:none;" id="dash-read-more">Læs mere om HOSTED →</a>
+        <a href="mailto:hosted.mobileapp@gmail.com" style="font-size:13px; font-weight:700; color:#555; text-decoration:none;" id="dash-feedback">Send feedback</a>
+      </div>
+    </div>
+
+    <p style="color:#333; font-size:12px; text-align:center; margin-top:4px; margin-bottom:16px;" id="dash-footer-text">
+      HOSTED beta · iOS + Android + Web kommer snart
+    </p>
+  </div>
+
+  <!-- ERROR -->
+  <div class="screen" id="screen-error">
+    <div class="logo-row">
+      <div class="badge" id="err-badge">FEST-APP</div>
+      <h1>HOSTED</h1>
+    </div>
+    <div class="error-icon">😕</div>
+    <div class="error-title" id="error-title">Festen ikke fundet</div>
+    <div class="error-sub" id="error-msg">
+      Festkoden er ugyldig eller festen er afsluttet.<br>Bed værten om at dele linket igen.
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://mfebfftytmjhextklsgj.supabase.co';
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8';
+
+    const EMOJIS = [
+      '🎉','🥳','🔥','⚡','🌟','💫',
+      '👑','🦋','🐉','🎸','🍕','🍓',
+      '🌈','🦊','🐺','🦁','🐸','🤠',
+      '😎','🥵','🤩','🫶','💪','🙈',
+      '🎯','🏆','🎲','🃏','🍺','💃'
+    ];
+
+    // ── Language ──
+    let currentLang = 'da';
+
+    const LANG = {
+      da: {
+        badge: 'FEST-APP',
+        tagline: 'kortspil · fotoalbum · druk-tæller',
+        // loading / shared
+        code_prefix: 'Kode: ',
+        // no-code
+        nc_coming_title: 'Appen er på vej',
+        nc_coming_desc: 'HOSTED er i beta. Skriv dig op og få besked<br>som en af de første når den er klar til alle.',
+        nc_wl_title: '🔔 Få besked når appen lanceres',
+        nc_wl_sub: 'Vi sender dig én mail. Intet spam.',
+        nc_wl_btn: 'Tilmeld',
+        nc_success: '<span>✓</span> Du er på listen — vi giver dig besked!',
+        nc_code_label: 'HAR DU EN FESTKODE?',
+        nc_code_error: 'Festen blev ikke fundet — tjek koden',
+        nc_code_error_generic: 'Noget gik galt — prøv igen.',
+        // email-first
+        ef_invited_label: 'DU ER INVITERET TIL',
+        ef_wl_title: '🔔 Få besked når appen lanceres',
+        ef_wl_sub: 'Én mail når HOSTED er klar til alle. Intet spam.',
+        ef_wl_btn: 'Tilmeld',
+        ef_success: '<span>✓</span> Du er på listen!',
+        ef_skip: 'Spring over → Gå til festen',
+        // join
+        join_invited_label: 'DU ER INVITERET TIL',
+        join_name_label: 'DIT NAVN',
+        join_name_placeholder: 'Hvad hedder du?',
+        join_emoji_label: 'VÆLG DIN EMOJI',
+        join_btn: 'Join festen',
+        joining: 'Joiner…',
+        join_error: 'Noget gik galt — prøv igen.',
+        // dashboard
+        dash_badge: 'FEST-APP',
+        dash_party_in: 'Du er med i festen 🔥',
+        no_game_title: 'Ingen spil i gang',
+        no_game_sub: 'Venter på værtens signal...',
+        guests_label: 'GÆSTER',
+        loading_guests: 'Henter gæster...',
+        no_guests: 'Ingen gæster endnu',
+        beta_title: '🚧 HOSTED er under udvikling',
+        beta_desc: 'Appen er i beta og er på vej til alle platforme. Der kan forekomme forsinkelser eller utilgængelige funktioner — det arbejder vi på.',
+        read_more: 'Læs mere om HOSTED →',
+        send_feedback: 'Send feedback',
+        dash_footer: 'HOSTED beta · iOS + Android + Web kommer snart',
+        // error screen
+        error_title: 'Festen ikke fundet',
+        error_sub: 'Festkoden er ugyldig eller festen er afsluttet.<br>Bed værten om at dele linket igen.',
+        // dynamic game
+        live_now: 'LIVE NU',
+        tap_follow: 'TAP FOR AT FØLGE MED ↗',
+        active_card_label: '🃏 AKTIVT KORT',
+        card_update: 'OPDATERES AUTOMATISK',
+        vote_header: '👉 STEM NU',
+        votes_text: (n) => `${n} stemme${n===1?'':'r'} · opdateres hvert 3. sek`,
+        game_kortspil_sub: 'Tryk for at følge med i kortene →',
+        game_tilbojelig_sub: 'Stem herunder!',
+        game_impostor_sub: 'Find impostoren!',
+        game_turnering_sub: 'Der spilles turnering!',
+        game_default_sub: 'Spil er i gang!',
+        // init errors
+        init_not_found: 'Festen findes ikke. Tjek at koden er korrekt.',
+        init_fetch_error: 'Kunne ikke hente fest. Prøv igen om lidt.',
+        // waitlist
+        wl_loading: '…',
+        wl_alert: 'Noget gik galt — prøv igen.',
+      },
+      en: {
+        badge: 'PARTY APP',
+        tagline: 'card games · photo album · drink counter',
+        code_prefix: 'Code: ',
+        // no-code
+        nc_coming_title: 'App coming soon',
+        nc_coming_desc: 'HOSTED is in beta. Sign up and be one of the first to know when it\'s ready for everyone.',
+        nc_wl_title: '🔔 Get notified when the app launches',
+        nc_wl_sub: 'We\'ll send you one email. No spam.',
+        nc_wl_btn: 'Sign up',
+        nc_success: '<span>✓</span> You\'re on the list — we\'ll let you know!',
+        nc_code_label: 'HAVE A PARTY CODE?',
+        nc_code_error: 'Party not found — check the code',
+        nc_code_error_generic: 'Something went wrong — please try again.',
+        // email-first
+        ef_invited_label: 'YOU\'RE INVITED TO',
+        ef_wl_title: '🔔 Get notified when the app launches',
+        ef_wl_sub: 'One email when HOSTED is ready for everyone. No spam.',
+        ef_wl_btn: 'Sign up',
+        ef_success: '<span>✓</span> You\'re on the list!',
+        ef_skip: 'Skip → Join the party',
+        // join
+        join_invited_label: 'YOU\'RE INVITED TO',
+        join_name_label: 'YOUR NAME',
+        join_name_placeholder: 'What\'s your name?',
+        join_emoji_label: 'PICK YOUR EMOJI',
+        join_btn: 'Join the party',
+        joining: 'Joining…',
+        join_error: 'Something went wrong — please try again.',
+        // dashboard
+        dash_badge: 'PARTY APP',
+        dash_party_in: 'You\'re in the party 🔥',
+        no_game_title: 'No game running',
+        no_game_sub: 'Waiting for the host\'s signal...',
+        guests_label: 'GUESTS',
+        loading_guests: 'Loading guests...',
+        no_guests: 'No guests yet',
+        beta_title: '🚧 HOSTED is in development',
+        beta_desc: 'The app is in beta and coming to all platforms. There may be delays or unavailable features — we\'re working on it.',
+        read_more: 'Read more about HOSTED →',
+        send_feedback: 'Send feedback',
+        dash_footer: 'HOSTED beta · iOS + Android + Web coming soon',
+        // error screen
+        error_title: 'Party not found',
+        error_sub: 'The party code is invalid or the party has ended.<br>Ask the host to share the link again.',
+        // dynamic game
+        live_now: 'LIVE NOW',
+        tap_follow: 'TAP TO FOLLOW ALONG ↗',
+        active_card_label: '🃏 ACTIVE CARD',
+        card_update: 'UPDATES AUTOMATICALLY',
+        vote_header: '👉 VOTE NOW',
+        votes_text: (n) => `${n} vote${n===1?'':'s'} · updates every 3 sec`,
+        game_kortspil_sub: 'Tap to follow the cards →',
+        game_tilbojelig_sub: 'Vote below!',
+        game_impostor_sub: 'Find the impostor!',
+        game_turnering_sub: 'Tournament in progress!',
+        game_default_sub: 'Game in progress!',
+        // init errors
+        init_not_found: 'Party not found. Check that the code is correct.',
+        init_fetch_error: 'Could not load the party. Try again in a moment.',
+        // waitlist
+        wl_loading: '…',
+        wl_alert: 'Something went wrong — please try again.',
+      }
+    };
+
+    function T(key) { return LANG[currentLang][key] || LANG['da'][key] || key; }
+
+    function setLang(lang) {
+      currentLang = lang;
+      document.documentElement.lang = lang;
+      const s = LANG[lang];
+      // Badges & taglines
+      ['load-badge','nc-badge','ef-badge','join-badge','dash-badge','err-badge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = s.badge;
+      });
+      ['nc-tagline','ef-tagline','join-tagline'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = s.tagline;
+      });
+      // No-code screen
+      setText('nc-coming-title', s.nc_coming_title);
+      setHTML('nc-coming-desc', s.nc_coming_desc);
+      setText('nc-wl-title', s.nc_wl_title);
+      setText('nc-wl-sub', s.nc_wl_sub);
+      setText('btn-nocode', s.nc_wl_btn);
+      setHTML('success-nocode', s.nc_success);
+      setText('nc-code-label', s.nc_code_label);
+      setText('manual-code-error', document.getElementById('manual-code-error')?.dataset.generic ? s.nc_code_error_generic : s.nc_code_error);
+      // Email-first screen
+      setText('ef-invited-label', s.ef_invited_label);
+      setText('ef-wl-title', s.ef_wl_title);
+      setText('ef-wl-sub', s.ef_wl_sub);
+      setText('btn-ef', s.ef_wl_btn);
+      setHTML('success-ef', s.ef_success);
+      setText('ef-skip-btn', s.ef_skip);
+      // Join screen
+      setText('join-invited-label', s.join_invited_label);
+      setText('join-name-label', s.join_name_label);
+      const ni = document.getElementById('name-input');
+      if (ni) ni.placeholder = s.join_name_placeholder;
+      setText('join-emoji-label', s.join_emoji_label);
+      const jb = document.getElementById('join-btn');
+      if (jb && !jb.disabled) jb.textContent = s.join_btn;
+      else if (jb && jb.disabled) jb.textContent = s.join_btn;
+      // Dashboard
+      setText('dash-no-game-title', s.no_game_title);
+      setText('dash-no-game-sub', s.no_game_sub);
+      setText('dash-guests-label', s.guests_label);
+      setText('dash-loading-guests', s.loading_guests);
+      setText('dash-beta-title', s.beta_title);
+      setText('dash-beta-desc', s.beta_desc);
+      setText('dash-read-more', s.read_more);
+      setText('dash-feedback', s.send_feedback);
+      setText('dash-footer-text', s.dash_footer);
+      setText('card-label-el', s.active_card_label);
+      setText('card-update-text', s.card_update);
+      // Error screen
+      setText('error-title', s.error_title);
+      // Lang buttons
+      document.getElementById('btnDA').classList.toggle('active', lang === 'da');
+      document.getElementById('btnEN').classList.toggle('active', lang === 'en');
+    }
+
+    function setText(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.textContent = val;
+    }
+    function setHTML(id, val) {
+      const el = document.getElementById(id);
+      if (el && val !== undefined) el.innerHTML = val;
+    }
+
+    // ── State ──
+    let partyId = null;
+    let partyName = '';
+    let partyCode = '';
+    let selectedEmoji = '';
+    let guestName = '';
+    let pollInterval = null;
+
+    // ── Helpers ──
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    async function supabase(method, endpoint, body) {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, {
+        method,
+        headers: {
+          'apikey': ANON_KEY,
+          'Authorization': `Bearer ${ANON_KEY}`,
+          'Content-Type': 'application/json',
+          'Prefer': method === 'POST' ? 'return=representation' : ''
+        },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      if (!res.ok && res.status !== 201) throw new Error(`${res.status}`);
+      const text = await res.text();
+      return text ? JSON.parse(text) : null;
+    }
+
+    // ── Emoji grid ──
+    function buildEmojiGrid() {
+      const grid = document.getElementById('emoji-grid');
+      EMOJIS.forEach(em => {
+        const btn = document.createElement('button');
+        btn.className = 'emoji-btn';
+        btn.textContent = em;
+        btn.onclick = () => {
+          document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          selectedEmoji = em;
+          updateJoinBtn();
+        };
+        grid.appendChild(btn);
+      });
+      // Select first by default
+      grid.firstChild.classList.add('selected');
+      selectedEmoji = EMOJIS[0];
+    }
+
+    function updateJoinBtn() {
+      const btn = document.getElementById('join-btn');
+      const name = document.getElementById('name-input').value.trim();
+      btn.disabled = name.length < 2 || !selectedEmoji;
+    }
+
+    // ── Init ──
+    async function init() {
+      buildEmojiGrid();
+
+      const params = new URLSearchParams(window.location.search);
+      partyCode = (params.get('code') || '').toUpperCase().trim();
+
+      // Check if already joined
+      const saved = localStorage.getItem('hosted_guest_' + partyCode);
+      if (saved) {
+        const data = JSON.parse(saved);
+        guestName = data.name;
+        selectedEmoji = data.emoji;
+        partyId = data.partyId;
+        partyName = data.partyName;
+        showDashboard();
+        return;
+      }
+
+      if (!partyCode) {
+        show('screen-nocode');
+        return;
+      }
+
+      try {
+        const parties = await supabase('GET', `parties?code=eq.${partyCode}&select=id,name,code`);
+        if (!parties || parties.length === 0) {
+          showError(T('init_not_found'));
+          return;
+        }
+        const party = parties[0];
+        partyId = party.id;
+        partyName = party.name;
+
+        // Show email-first screen
+        document.getElementById('ef-party-name').textContent = party.name;
+        document.getElementById('ef-party-code').textContent = T('code_prefix') + party.code;
+        show('screen-email-first');
+      } catch (e) {
+        showError(T('init_fetch_error'));
+      }
+    }
+
+    async function doJoin() {
+      const btn = document.getElementById('join-btn');
+      guestName = document.getElementById('name-input').value.trim();
+      if (guestName.length < 2 || !selectedEmoji || !partyId) return;
+
+      btn.disabled = true;
+      btn.textContent = T('joining');
+
+      try {
+        // Check if already joined with same name (simple dedup)
+        const existing = await supabase('GET',
+          `guests?party_id=eq.${partyId}&display_name=eq.${encodeURIComponent(guestName)}`
+        );
+
+        if (!existing || existing.length === 0) {
+          const guestId = crypto.randomUUID();
+          await supabase('POST', 'guests', {
+            id: guestId,
+            party_id: partyId,
+            display_name: guestName,
+            avatar_url: selectedEmoji
+          });
+        }
+
+        // Save locally so refresh doesn't re-join
+        localStorage.setItem('hosted_guest_' + partyCode, JSON.stringify({
+          name: guestName,
+          emoji: selectedEmoji,
+          partyId,
+          partyName
+        }));
+
+        showDashboard();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = T('join_btn');
+        alert(T('join_error'));
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('dash-avatar').textContent = selectedEmoji;
+      document.getElementById('dash-name').textContent = guestName + ' 🎉';
+      document.getElementById('dash-party').textContent = partyName;
+      show('screen-dashboard');
+      pollGameAndGuests();
+      pollInterval = setInterval(pollGameAndGuests, 5000);
+    }
+
+    let currentActiveGame = null;
+    let currentActiveCard = null;
+    let currentPackName = null;
+    let currentQuestion = null;
+    let currentActivePlayers = [];
+    let myVoteThisQuestion = null;
+    let showingCardView = false;
+
+    // Pack name → accent color (matches iOS DesignSystem)
+    const PACK_COLORS = {
+      'Opvarmning':   '#c8ff00',
+      'Hjernevrider': '#00e5ff',
+      'Party Mode':   '#ff2d78',
+      'Flirt & Drama':'#ff8c00',
+      'Udfordringer': '#9b59b6',
+      'Hardcore':     '#ff3333',
+    };
+
+    async function pollGameAndGuests() {
+      try {
+        const [parties, guests] = await Promise.all([
+          supabase('GET', `parties?id=eq.${partyId}&select=active_game,active_card,active_question,active_players`),
+          supabase('GET', `guests?party_id=eq.${partyId}&select=display_name,avatar_url`)
+        ]);
+
+        const activeGameRaw = parties?.[0]?.active_game || null;
+        const activeCard = parties?.[0]?.active_card || null;
+        const activeQuestion = parties?.[0]?.active_question || null;
+        const activePlayersJson = parties?.[0]?.active_players || null;
+
+        // Parse "Kortspil|PackName" format
+        let activeGame = activeGameRaw;
+        let packName = null;
+        if (activeGameRaw && activeGameRaw.includes('|')) {
+          [activeGame, packName] = activeGameRaw.split('|');
+        }
+
+        // Parse players JSON
+        let activePlayers = [];
+        try { if (activePlayersJson) activePlayers = JSON.parse(activePlayersJson); } catch(e) {}
+
+        if (activeGameRaw !== currentActiveGame || JSON.stringify(activePlayers) !== JSON.stringify(currentActivePlayers)) {
+          currentActiveGame = activeGameRaw;
+          currentPackName = packName;
+          currentActivePlayers = activePlayers;
+          if (!showingCardView) updateGameSection(activeGame, packName, activePlayers, activeCard);
+        }
+        if (activeCard !== currentActiveCard) {
+          currentActiveCard = activeCard;
+          updateCardDisplay(activeCard, currentPackName);
+        }
+        // Tilbøjelig: refresh question + votes
+        if (activeGame === 'Tilbøjelig' && activeQuestion) {
+          if (activeQuestion !== currentQuestion) {
+            currentQuestion = activeQuestion;
+            myVoteThisQuestion = null; // new question = reset my vote
+          }
+          updateVotingView(activeQuestion, activePlayers);
+        } else if (currentQuestion && activeGame !== 'Tilbøjelig') {
+          currentQuestion = null;
+          document.getElementById('voting-view').style.display = 'none';
+        }
+        if (guests) updateGuestsRow(guests);
+      } catch (e) { /* stille fejl */ }
+    }
+
+    function getGameInfo(activeGame) {
+      return {
+        'Kortspil':    { icon: '🃏', sub: T('game_kortspil_sub'), tappable: true, color: '#c8ff00' },
+        'Tilbøjelig':  { icon: '👉', sub: T('game_tilbojelig_sub'), tappable: false, color: '#00e5ff' },
+        'Impostor':    { icon: '🎭', sub: T('game_impostor_sub'), tappable: false, color: '#9b59b6' },
+        'Turnering':   { icon: '🏆', sub: T('game_turnering_sub'), tappable: false, color: '#ff2d78' },
+      }[activeGame] || { icon: '🎮', sub: T('game_default_sub'), tappable: false, color: '#c8ff00' };
+    }
+
+    function updateGameSection(activeGame, packName, activePlayers, activeCard) {
+      const section = document.getElementById('game-section');
+      if (activeGame) {
+        const info = getGameInfo(activeGame);
+        const accentColor = (activeGame === 'Kortspil' && packName && PACK_COLORS[packName])
+          ? PACK_COLORS[packName] : info.color;
+        const displayName = (activeGame === 'Kortspil' && packName) ? `Kortspil — ${packName}` : activeGame;
+        const playerChips = activePlayers.length > 0
+          ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">${activePlayers.map(p =>
+              `<div style="background:#111;border:1px solid #333;border-radius:20px;padding:4px 12px;font-size:12px;font-weight:600;color:#ccc;">${p}</div>`
+            ).join('')}</div>` : '';
+        section.className = 'game-card active-game' + (info.tappable ? ' tappable-card' : '');
+        section.style.cursor = info.tappable ? 'pointer' : 'default';
+        section.style.borderColor = `${accentColor}66`;
+        section.innerHTML = `
+          <div class="game-live-badge" style="background:${accentColor};color:#0d0d0d;"><div class="live-dot" style="background:#0d0d0d;"></div> ${T('live_now')}</div>
+          <div class="game-name">${info.icon} ${displayName}</div>
+          <div class="game-sub">${info.sub}</div>
+          ${playerChips}
+          ${info.tappable ? `<div style="margin-top:10px;font-size:12px;color:${accentColor};font-weight:700;">${T('tap_follow')}</div>` : ''}
+        `;
+        if (info.tappable) {
+          section.onclick = () => openCardView();
+        } else {
+          section.onclick = null;
+        }
+      } else {
+        showingCardView = false;
+        document.getElementById('card-view').style.display = 'none';
+        document.getElementById('voting-view').style.display = 'none';
+        section.className = 'game-card';
+        section.style.cursor = 'default';
+        section.style.borderColor = '';
+        section.onclick = null;
+        section.innerHTML = `
+          <div class="no-game-icon">🎮</div>
+          <div class="no-game-title">${T('no_game_title')}</div>
+          <div class="no-game-sub">${T('no_game_sub')}</div>
+        `;
+        document.getElementById('card-view').style.display = 'none';
+      }
+    }
+
+    function openCardView() {
+      showingCardView = true;
+      const cv = document.getElementById('card-view');
+      cv.style.display = 'block';
+      updateCardDisplay(currentActiveCard, currentPackName);
+      cv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateCardDisplay(cardText, packName) {
+      const el = document.getElementById('card-text');
+      const cv = document.getElementById('card-view');
+      if (!el) return;
+      if (cardText) {
+        el.textContent = cardText;
+        const accentColor = (packName && PACK_COLORS[packName]) ? PACK_COLORS[packName] : '#c8ff00';
+        const cardBox = cv.querySelector('div');
+        if (cardBox) {
+          cardBox.style.borderColor = `${accentColor}66`;
+        }
+        const labelEl = document.getElementById('card-label-el');
+        if (labelEl) labelEl.style.color = accentColor;
+        cv.style.display = showingCardView ? 'block' : 'none';
+      } else {
+        cv.style.display = 'none';
+        showingCardView = false;
+      }
+    }
+
+    async function updateVotingView(question, players) {
+      const vv = document.getElementById('voting-view');
+      if (!question || !players.length) { vv.style.display = 'none'; return; }
+      vv.style.display = 'block';
+
+      // Fetch current vote counts
+      let votes = {};
+      try {
+        const qEnc = encodeURIComponent(question);
+        const rows = await supabase('GET', `most_likely_votes?party_id=eq.${partyId}&question=eq.${qEnc}&select=voted_for`);
+        (rows || []).forEach(r => { votes[r.voted_for] = (votes[r.voted_for] || 0) + 1; });
+      } catch(e) {}
+
+      const totalVotes = Object.values(votes).reduce((a,b) => a+b, 0);
+      const winner = players.reduce((best, p) => (votes[p]||0) > (votes[best]||0) ? p : best, players[0]);
+      const isWinner = totalVotes > 0 && players.filter(p => (votes[p]||0) === (votes[winner]||0)).length === 1;
+
+      vv.innerHTML = `
+        <div style="background:#161616;border:1.5px solid rgba(0,229,255,0.4);border-radius:24px;padding:28px 24px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:2px;color:#00e5ff;margin-bottom:16px;">${T('vote_header')}</div>
+          <div style="font-size:18px;font-weight:900;color:#fff;margin-bottom:20px;line-height:1.5;">${question}</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            ${players.map(p => {
+              const count = votes[p] || 0;
+              const pct = totalVotes > 0 ? Math.round(count/totalVotes*100) : 0;
+              const isMyVote = myVoteThisQuestion === p;
+              const isTop = isWinner && p === winner;
+              return `
+                <button onclick="castWebVote('${p.replace(/'/g,"\\'")}','${question.replace(/'/g,"\\'")}');return false;"
+                  style="background:${isMyVote ? 'rgba(0,229,255,0.15)' : '#111'};
+                         border:1.5px solid ${isMyVote ? '#00e5ff' : '#2a2a2a'};
+                         border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;
+                         display:flex;align-items:center;gap:12px;transition:all 0.2s;">
+                  <div style="width:40px;height:40px;border-radius:50%;background:${isMyVote?'rgba(0,229,255,0.25)':'#1a1a1a'};
+                       display:flex;align-items:center;justify-content:center;
+                       font-size:16px;font-weight:900;color:${count>0?'#00e5ff':'#555'};flex-shrink:0;">
+                    ${p.charAt(0).toUpperCase()}
+                  </div>
+                  <div style="flex:1;">
+                    <div style="font-size:16px;font-weight:700;color:#fff;">${p}</div>
+                    <div style="height:4px;background:#222;border-radius:2px;margin-top:6px;overflow:hidden;">
+                      <div style="height:100%;width:${pct}%;background:#00e5ff;border-radius:2px;transition:width 0.4s;"></div>
+                    </div>
+                  </div>
+                  ${count > 0 ? `<div style="font-size:15px;font-weight:900;color:${isTop?'#00e5ff':'#666'};">${count}</div>` : ''}
+                  ${isMyVote ? `<div style="font-size:11px;color:#00e5ff;font-weight:700;">✓</div>` : ''}
+                </button>`;
+            }).join('')}
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:#444;text-align:center;">${LANG[currentLang].votes_text(totalVotes)}</div>
+        </div>`;
+    }
+
+    async function castWebVote(playerName, question) {
+      if (!partyId || !guestName) return;
+      myVoteThisQuestion = playerName;
+      try {
+        const body = JSON.stringify({ party_id: partyId, question, voter_name: guestName, voted_for: playerName });
+        await fetch(`${SUPABASE_URL}/rest/v1/most_likely_votes`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal,resolution=merge-duplicates',
+            'on_conflict': 'party_id,question,voter_name'
+          },
+          body
+        });
+        // Refresh voting view immediately
+        updateVotingView(question, currentActivePlayers);
+      } catch(e) {}
+    }
+
+    function updateGuestsRow(guests) {
+      const row = document.getElementById('guests-row');
+      if (guests.length === 0) {
+        row.innerHTML = `<div style="color:#444;font-size:13px;">${T('no_guests')}</div>`;
+        return;
+      }
+      row.innerHTML = guests.map(g => {
+        const isEmoji = g.avatar_url && [...g.avatar_url].length <= 2 && g.avatar_url.trim() !== '';
+        const avatarHtml = isEmoji
+          ? `<span style="font-size:16px">${g.avatar_url}</span>`
+          : (g.avatar_url
+              ? `<img class="guest-chip-avatar" src="${g.avatar_url}" onerror="this.style.display='none'">`
+              : `<span style="font-size:16px">👤</span>`);
+        return `<div class="guest-chip">${avatarHtml}${g.display_name}</div>`;
+      }).join('');
+    }
+
+    function showError(msg) {
+      document.getElementById('error-msg').innerHTML = msg || LANG[currentLang].error_sub;
+      show('screen-error');
+    }
+
+    async function submitWaitlist(inputId, btnId, successId) {
+      const input = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      const success = document.getElementById(successId);
+      const email = input.value.trim();
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => input.style.borderColor = '', 1500);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = T('wl_loading');
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'apikey': ANON_KEY,
+            'Authorization': `Bearer ${ANON_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email, source: partyCode ? 'party_join' : 'nocode' })
+        });
+        if (!res.ok) throw new Error(res.status);
+        input.closest('.waitlist-row').style.display = 'none';
+        success.style.display = 'flex';
+        localStorage.setItem('hosted_waitlist_' + email, '1');
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = T('nc_wl_btn');
+        alert(T('wl_alert'));
+      }
+    }
+
+    function goToJoinForm() {
+      document.getElementById('join-party-name').textContent = partyName;
+      document.getElementById('join-party-code').textContent = T('code_prefix') + partyCode;
+      document.getElementById('name-input').addEventListener('input', updateJoinBtn);
+      document.getElementById('join-btn').onclick = doJoin;
+      show('screen-join');
+    }
+
+    async function submitWaitlistThenContinue() {
+      const input = document.getElementById('email-ef');
+      const btn = document.getElementById('btn-ef');
+      const success = document.getElementById('success-ef');
+      const row = document.getElementById('ef-email-row');
+      const email = input.value.trim();
+      if (!email || !email.includes('@')) {
+        input.style.borderColor = '#ff4444';
+        setTimeout(() => input.style.borderColor = '', 1500);
+        return;
+      }
+      btn.disabled = true;
+      btn.textContent = T('wl_loading');
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: { 'apikey': ANON_KEY, 'Authorization': `Bearer ${ANON_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+          body: JSON.stringify({ email, source: 'party_qr' })
+        });
+      } catch(e) { /* stille fejl — fortsæt uanset */ }
+      row.style.display = 'none';
+      success.style.display = 'flex';
+      // Auto-videre efter 1.2 sek
+      setTimeout(() => goToJoinForm(), 1200);
+    }
+
+    function updateManualJoinBtn() {
+      const val = document.getElementById('manual-code-input').value.trim();
+      document.getElementById('btn-manual-join').disabled = val.length < 3;
+      document.getElementById('manual-code-error').style.display = 'none';
+    }
+
+    async function joinWithManualCode() {
+      const code = document.getElementById('manual-code-input').value.trim().toUpperCase();
+      const btn = document.getElementById('btn-manual-join');
+      const err = document.getElementById('manual-code-error');
+      btn.disabled = true;
+      btn.textContent = T('wl_loading');
+      try {
+        const parties = await supabase('GET', `parties?code=eq.${code}&select=id,name,code`);
+        if (!parties || parties.length === 0) {
+          err.textContent = T('nc_code_error');
+          err.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = '→';
+          return;
+        }
+        // Code found — set state and go to join form
+        const party = parties[0];
+        partyId = party.id;
+        partyName = party.name;
+        partyCode = party.code;
+        document.getElementById('join-party-name').textContent = party.name;
+        document.getElementById('join-party-code').textContent = T('code_prefix') + party.code;
+        document.getElementById('name-input').addEventListener('input', updateJoinBtn);
+        document.getElementById('join-btn').onclick = doJoin;
+        show('screen-join');
+      } catch(e) {
+        err.textContent = T('nc_code_error_generic');
+        err.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '→';
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
