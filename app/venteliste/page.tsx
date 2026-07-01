@@ -6,8 +6,18 @@ export default function Venteliste() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSignup(e: React.FormEvent) {
+  async function handleSignup(e: React.FormEvent) {
     e.preventDefault();
+    await fetch("https://mfebfftytmjhextklsgj.supabase.co/rest/v1/waitlist", {
+      method: "POST",
+      headers: {
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8",
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ email, source: "venteliste" })
+    }).catch(() => {});
     setSubmitted(true);
   }
 

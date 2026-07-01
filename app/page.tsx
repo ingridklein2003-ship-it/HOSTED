@@ -166,7 +166,20 @@ function HomeContent() {
             ✓ Du er på listen! Vi skriver til dig.
           </div>
         ) : (
-          <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            await fetch("https://mfebfftytmjhextklsgj.supabase.co/rest/v1/waitlist", {
+              method: "POST",
+              headers: {
+                "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8",
+                "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1mZWJmZnR5dG1qaGV4dGtsc2dqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMTM5NzQsImV4cCI6MjA5NzY4OTk3NH0.wN6w3Ky-D1tPxWg47adOsWKdyW_7xxiwdFSOMrd4kS8",
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+              },
+              body: JSON.stringify({ email, source: "forside" })
+            }).catch(() => {});
+            setSubmitted(true);
+          }} style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
             <input type="email" required placeholder="din@email.dk" value={email} onChange={(e) => setEmail(e.target.value)}
               style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: 14, padding: "14px 20px", fontSize: 16, color: "var(--text)", outline: "none", flex: 1, minWidth: 220 }} />
             <button type="submit" style={{ background: "linear-gradient(135deg, #ff3b5c, #ff6b35)", color: "white", padding: "14px 28px", borderRadius: 14, border: "none", fontSize: 16, fontWeight: 700, cursor: "pointer" }}>Tilmeld →</button>
